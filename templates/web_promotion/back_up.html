@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="th" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost and Status</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        thh, tdh {
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            display: none;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .non-editable {
+            background-color: #e9ecef;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    {% extends "web_promotion/base.html" %}
+    {% block title %}Cost & Status{% endblock %}
+    {% block content %}
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">Cost & Status</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Cost & Status</li>
+        </ol>
+        <div class="container mt-5">
+            <button class="btn btn-success mb-3" id="insertRowButton">Insert</button>
+            <div class="table-wrapper">
+                <table id="datatablesSimple" class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>ID</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Brand</th>
+                            <th>Model SKU</th>
+                            <th>Price RRP</th>
+                            <th>Margin</th>
+                            <th>Cost</th>
+                            <th>Timestamp</th>
+                            <th>Status</th>
+                            <th>Status Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                            <tr>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" onclick='editRow(this)'>Edit</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">Delete</button>
+                                </td>
+                                <td>{{ row.id }}</td>
+                                <td>{{ row.start }}</td>
+                                <td>{{ row.end }}</td>
+                                <td>{{ row.brand }}</td>
+                                <td>{{ row.model_sku }}</td>
+                                <td>{{ row.price_rrp }}</td>
+                                <td>{{ row.margin }}</td>
+                                <td>{{ row.cost_b }}</td>
+                                <td>{{ row.timestamp }}</td>
+                                <td>{{ row.status }}</td>
+                                <td>{{ row.status_cost }}</td>
+                            </tr>
+                        {% else %}
+                            <tr id="no-data">
+                                <td colspan="12" class="text-center">ไม่มีข้อมูล</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('insertRowButton').addEventListener('click', function() {
+                addEmptyRow();
+            });
+        });
+
+        function addEmptyRow() {
+            console.log('addEmptyRow function called'); // Debugging
+            const noDataRow = document.getElementById('no-data');
+            if (noDataRow) {
+                noDataRow.remove();
+            }
+            const newRow = document.createElement('tr');
+            newRow.className = 'new-row';
+            newRow.innerHTML = `
+                <td>
+                    <button class="btn btn-success btn-sm" onclick="saveNewData(this)">Save</button>
+                    <button class="btn btn-secondary btn-sm" onclick="cancelNewRow(this)">Cancel</button>
+                </td>
+                <td></td>
+                <td><input type="date" class="form-control" placeholder="dd-mm-yyyy" name="start"></td>
+                <td><input type="date" class="form-control" placeholder="dd-mm-yyyy" name="end"></td>
+                <td><input type="text" class="form-control" name="brand"></td>
+                <td><input type="text" class="form-control" name="model_sku"></td>
+                <td><input type="number" class="form-control" name="price_rrp" step="0.01"></td>
+                <td>
+                    <div class="percentage-input-wrapper">
+                        <input type="number" class="form-control percentage-input" name="margin" min="0" max="100"><span class="percentage-symbol">%</span>
+                    </div>
+                </td>
+                <td><input type="number" class="form-control" name="cost_b" step="0.01"></td>
+                <td></td>
+                <td><input type="text" class="form-control" name="status"></td>
+                <td><input type="text" class="form-control" name="status_cost"></td>
+            `;
+            console.log(newRow); // Debugging
+            document.querySelector('#datatablesSimple tbody').appendChild(newRow);
+        }
+
+        function saveNewData(button) {
+            const row = button.closest('tr');
+            const startValue = row.querySelector('input[name="start"]').value;
+
+            if (!startValue) {
+                alert('กรุณาใส่วันที่เริ่มต้น');
+                return;
+            }
+
+            const rowData = {
+                start: row.querySelector('input[name="start"]').value,
+                end: row.querySelector('input[name="end"]').value,
+                brand: row.querySelector('input[name="brand"]').value,
+                model_sku: row.querySelector('input[name="model_sku"]').value,
+                price_rrp: parseFloat(row.querySelector('input[name="price_rrp"]').value).toFixed(2),
+                margin: parseInt(row.querySelector('input[name="margin"]').value, 10),
+                cost_b: parseFloat(row.querySelector('input[name="cost_b"]').value).toFixed(2),
+                status: row.querySelector('input[name="status"]').value,
+                status_cost: row.querySelector('input[name="status_cost"]').value
+            };
+
+            console.log('Row data:', rowData); // Debugging
+
+            $.ajax({
+                type: 'POST',
+                url: '/web_promotion_cost_insert',
+                contentType: 'application/json',
+                data: JSON.stringify({ table_data: [rowData] }),
+                success: function (response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    alert('Failed to save data.');
+                }
+            });
+        }
+
+        function cancelNewRow(button) {
+            button.closest('tr').remove();
+            const tbody = document.querySelector('#datatablesSimple tbody');
+            if (tbody.children.length === 0) {
+                const noDataRow = document.createElement('tr');
+                noDataRow.id = 'no-data';
+                noDataRow.innerHTML = `<td colspan="12" class="text-center">ไม่มีข้อมูล</td>`;
+                tbody.appendChild(noDataRow);
+            }
+        }
+
+        function editRow(button) {
+            const row = button.closest('tr');
+            row.querySelectorAll('td').forEach((cell, index) => {
+                const content = cell.textContent.trim();
+                let name = '';
+                switch (index) {
+                    case 1: name = 'id'; break;
+                    case 2: name = 'start'; break;
+                    case 3: name = 'end'; break;
+                    case 4: name = 'brand'; break;
+                    case 5: name = 'model_sku'; break;
+                    case 6: name = 'price_rrp'; break;
+                    case 7: name = 'margin'; break;
+                    case 8: name = 'cost_b'; break;
+                    case 9: name = 'timestamp'; break;
+                    case 10: name = 'status'; break;
+                    case 11: name = 'status_cost'; break;
+                }
+                if (name) {
+                    if (name === 'id' || name === 'timestamp') {
+                        cell.innerHTML = `<input type="text" class="form-control non-editable" name="${name}" value="${content}" readonly>`;
+                    } else if (name === 'start' || name === 'end') {
+                        cell.innerHTML = `<input type="date" class="form-control" name="${name}" value="${content}">`;
+                    } else if (name === 'price_rrp' || name === 'cost_b') {
+                        cell.innerHTML = `<input type="number" class="form-control" name="${name}" value="${parseFloat(content).toFixed(2)}" step="0.01">`;
+                    } else if (name === 'margin') {
+                        cell.innerHTML = `
+                            <div class="percentage-input-wrapper">
+                                <input type="number" class="form-control percentage-input" name="${name}" value="${parseInt(content, 10)}" min="0" max="100">
+                                <span class="percentage-symbol">%</span>
+                            </div>
+                        `;
+                    } else {
+                        cell.innerHTML = `<input type="text" class="form-control" name="${name}" value="${content}">`;
+                    }
+                }
+            });
+
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-success');
+            button.textContent = 'Save';
+            button.setAttribute('onclick', 'saveEditedData(this)');
+            button.nextElementSibling.classList.remove('btn-danger');
+            button.nextElementSibling.classList.add('btn-secondary');
+            button.nextElementSibling.textContent = 'Cancel';
+            button.nextElementSibling.setAttribute('onclick', 'cancelEdit(this)');
+        }
+
+        function saveEditedData(button) {
+            const row = button.closest('tr');
+            const startValue = row.querySelector('input[name="start"]').value;
+
+            if (!startValue) {
+                alert('กรุณาใส่วันที่เริ่มต้น');
+                return;
+            }
+
+            const rowData = {
+                id: row.querySelector('input[name="id"]').value,
+                start: row.querySelector('input[name="start"]').value,
+                end: row.querySelector('input[name="end"]').value,
+                brand: row.querySelector('input[name="brand"]').value,
+                model_sku: row.querySelector('input[name="model_sku"]').value,
+                price_rrp: row.querySelector('input[name="price_rrp"]').value,
+                margin: row.querySelector('input[name="margin"]').value,
+                cost_b: row.querySelector('input[name="cost_b"]').value,
+                status: row.querySelector('input[name="status"]').value,
+                status_cost: row.querySelector('input[name="status_cost"]').value
+            };
+
+            console.log('Row data:', rowData); // Debugging
+
+            $.ajax({
+                type: 'POST',
+                url: '/web_promotion_cost_update',
+                contentType: 'application/json',
+                data: JSON.stringify({ table_data: [rowData] }),
+                success: function (response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    alert('Failed to save data.');
+                }
+            });
+        }
+
+        function cancelEdit(button) {
+            location.reload();
+        }
+
+        function deleteRow(id) {
+            if (confirm('คุณแน่ใจหรือว่าต้องการลบแถวนี้?')) {
+                $.post('/web_promotion_cost_delete', { id: id }, function(response) {
+                    alert(response.message);
+                    location.reload();
+                });
+            }
+        }
+    </script>
+    {% endblock %}
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

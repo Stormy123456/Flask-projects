@@ -1,0 +1,3 @@
+connection_string = "DRIVER={PostgreSQL ODBC Driver(UNICODE)};SERVER=192.168.10.136;PORT=5002;DATABASE=odoo_tg_golive_99;UID=tgfonereadonly08;PWD=WS2NZuPsnrTkSwWU"
+connection_string_invoice = "DRIVER={PostgreSQL ODBC Driver(UNICODE)};SERVER=localhost;PORT=5432;DATABASE=invoice_from_excel;UID=postgres;PWD=1234"
+db_test = "DRIVER={PostgreSQL ODBC Driver(UNICODE)};SERVER=localhost;PORT=5432;DATABASE=db_test_promotion;UID=postgres;PWD=1234"

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TG Service Apps</title>
+    <!-- เรียกใช้งาน Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* CSS เพิ่มเติมสำหรับหน้า Space Theme */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('static/images/59142.jpg'); /* เปลี่ยนที่นี่เป็นพาทที่ถูกต้องถ้าต้องการให้มันทำงาน */
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            text-align: center;
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        .welcome-container {
+            background-color: rgb(255, 90, 0);
+            padding: 20px;
+            border-radius: 10px;
+            width: max-content;
+            margin: 20px auto;
+        }
+        .custom-button:hover {
+            transform: scale(1.1); /* ขยายขนาดของปุ่มเมื่อเมาส์ไปชี้ */
+        }
+        .custom-button {
+            background-image: url('/static/images/stock.webp'); /* เปลี่ยนเป็น URL ของรูปภาพที่คุณต้องการใช้ */
+            background-size: cover; /* ปรับขนาดภาพให้เต็มพื้นที่ */
+            background-position: center; /* จัดตำแหน่งภาพกลาง */
+            width: 200px; /* กำหนดความกว้างของปุ่ม */
+            height: 65px; /* กำหนดความสูงของปุ่ม */
+            border: none; /* ไม่มีเส้นขอบ */
+            color: white; /* สีของตัวอักษร */
+            font-size: 16px; /* ขนาดตัวอักษร */
+            text-align: center; /* จัดตำแหน่งข้อความกลาง */
+            cursor: pointer; /* เปลี่ยนเคอร์เซอร์เป็นรูปของเมาส์เวลาชี้ */
+            border-radius: 5px; /* ปรับรูปร่างของมุม */
+        }
+        .custom-button2:hover {
+            transform: scale(1.1); /* ขยายขนาดของปุ่มเมื่อเมาส์ไปชี้ */
+        }
+        .custom-button2 {
+             background-image: url('/static/images/ar.jpg'); /* เปลี่ยนเป็น URL ของรูปภาพที่คุณต้องการใช้ */
+             background-size: cover; /* ปรับขนาดภาพให้เต็มพื้นที่ */
+             background-position: center; /* จัดตำแหน่งภาพกลาง */
+             width: 200px; /* กำหนดความกว้างของปุ่ม */
+             height: 65px; /* กำหนดความสูงของปุ่ม */
+             border: none; /* ไม่มีเส้นขอบ */
+             color: white; /* สีของตัวอักษร */
+             font-size: 16px; /* ขนาดตัวอักษร */
+             text-align: center; /* จัดตำแหน่งข้อความกลาง */
+             cursor: pointer; /* เปลี่ยนเคอร์เซอร์เป็นรูปของเมาส์เวลาชี้ */
+             border-radius: 5px; /* ปรับรูปร่างของมุม */
+         }
+        .custom-button3:hover {
+            transform: scale(1.1); /* ขยายขนาดของปุ่มเมื่อเมาส์ไปชี้ */
+        }
+        .custom-button3 {
+             background-image: url('/static/images/activity.png'); /* เปลี่ยนเป็น URL ของรูปภาพที่คุณต้องการใช้ */
+             background-size: cover; /* ปรับขนาดภาพให้เต็มพื้นที่ */
+             background-position: center; /* จัดตำแหน่งภาพกลาง */
+             width: 200px; /* กำหนดความกว้างของปุ่ม */
+             height: 65px; /* กำหนดความสูงของปุ่ม */
+             border: none; /* ไม่มีเส้นขอบ */
+             color: white; /* สีของตัวอักษร */
+             font-size: 16px; /* ขนาดตัวอักษร */
+             text-align: center; /* จัดตำแหน่งข้อความกลาง */
+             cursor: pointer; /* เปลี่ยนเคอร์เซอร์เป็นรูปของเมาส์เวลาชี้ */
+             border-radius: 5px; /* ปรับรูปร่างของมุม */
+         }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    <div class="container">
+        <div class="welcome-container">
+            <h1>TG service apps</h1>
+        </div>
+        <br/>
+        <a href="/sp_automate_index">
+            <button class="custom-button"></button>
+        </a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/pos_data_report_index">
+         <button class="custom-button2"></button>
+        </a>
+        &nbsp;&nbsp;&nbsp;
+        {% if session['employee_group_id'] == '59' %}
+        <a href="/user_logs">
+         <button class="custom-button3"></button>
+        </a>
+        {% endif %}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            if ({{ refresh | tojson }} == true) {
+                window.history.replaceState(null, null, window.location.pathname);
+                location.reload();
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    alert('{{ messages[0] }}');
+                {% endif %}
+            {% endwith %}
+        });
+    </script>
+    {% endblock %}
+    <!-- เรียกใช้งาน Bootstrap JS และ jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

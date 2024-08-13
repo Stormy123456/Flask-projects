@@ -1,0 +1,1 @@
+*/5 * * * * C:\Python39\python.exe C:\path\to\run_scheduled_task.py

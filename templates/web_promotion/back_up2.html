@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="th" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Premium</title>
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <!-- Include jQuery -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <!-- Include DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <!-- Include Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #ffffff;
+        }
+        .non-editable {
+            background-color: #e9ecef;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .filter-column {
+            min-width: 150px;
+        }
+        .percentage-input-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .percentage-symbol {
+            margin-left: 5px;
+        }
+        .dataTables_wrapper {
+            width: 100%;
+            overflow: hidden;
+        }
+        .dataTables_scrollHeadInner {
+            width: 100% !important;
+        }
+        .dataTables_scrollBody {
+            width: 100% !important;
+        }
+        select.form-control {
+            width: 100%;
+        }
+        .form-control, .percentage-input-wrapper {
+            box-sizing: border-box;
+        }
+        .table th, .table td {
+            text-align: left;
+        }
+        /* ปรับความสูงของ select2 */
+        .select2-container .select2-selection--single {
+            height: 38px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        .table td input, .table td select {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    {% extends "web_promotion/base.html" %}
+    {% block title %}Set Premium{% endblock %}
+    {% block content %}
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">Set Premium</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Set Premium</li>
+        </ol>
+        <button class="btn btn-success mb-3" id="insertRowButton">Insert</button>
+        <div class="table-wrapper">
+            <table id="example" class="display nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>ID</th>
+                        <th>ราคาขอบล่าง</th>
+                        <th>ราคาขอบบน</th>
+                        <th>ก๊อก 2 Set 1</th>
+                        <th>ก๊อก 2 Set 2</th>
+                        <th>ก๊อก 2 Set 3</th>
+                        <th>%ผ่อน</th>
+                        <th>เดือนผ่อน</th>
+                        <th>ประกันจอ</th>
+                        <th>Type</th>
+                        <th>AVG.P</th>
+                        <th>มูลค่า Voucher</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th><select id="status-filter"><option value="">All</option></select></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick='editRow(this)'>Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">Delete</button>
+                            </td>
+                            <td>{{ row.id }}</td>
+                            <td>{{ row.lowest_price }}</td>
+                            <td>{{ row.highest_price }}</td>
+                            <td>{{ row.optionset1 }}</td>
+                            <td>{{ row.optionset2 }}</td>
+                            <td>{{ row.optionset3 }}</td>
+                            <td>{{ row.cost_installment }}</td>
+                            <td>{{ row.month }}</td>
+                            <td>{{ row.warranty }}</td>
+                            <td>{{ row.type }}</td>
+                            <td>{{ row.avg_p }}</td>
+                            <td>{{ row.voucher_value }}</td>
+                            <td>{{ row.percent }}</td>
+                        </tr>
+                    {% else %}
+                        <tr id="no-data">
+                            <td colspan="14" class="text-center">ไม่มีข้อมูล</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var table = $('#example').DataTable({
+                scrollX: true,
+                scrollY: '500px',
+                scrollCollapse: true,
+                paging: false,
+                info: false,
+                autoWidth: false,
+                columnDefs: [
+                    { width: '20%', targets: 5 }
+                ],
+                initComplete: function(settings, json) {
+                    alignTableHeadAndBody();
+                }
+            });
+
+            function populateDropdown(columnIndex, dropdownId) {
+                var uniqueData = [];
+                table.column(columnIndex).data().unique().sort().each(function(d) {
+                    uniqueData.push(d);
+                });
+
+                $.each(uniqueData, function(index, value) {
+                    $(dropdownId).append('<option value="' + value + '">' + value + '</option>');
+                });
+            }
+            populateDropdown(11, '#status-cost-filter');
+
+            $('select').select2({
+                width: '100%',
+                dropdownAutoWidth: true
+            });
+
+            $('select').on('change', function() {
+                var columnIndex = $(this).parent().index();
+                var value = $.fn.dataTable.util.escapeRegex($(this).val());
+                table.column(columnIndex).search(value ? '^' + value + '$' : '', true, false).draw();
+            });
+
+            window.addEventListener('resize', alignTableHeadAndBody);
+        });
+
+        function alignTableHeadAndBody() {
+            const tableHead = document.querySelector('.dataTables_scrollHeadInner table');
+            const tableBody = document.querySelector('.dataTables_scrollBody table');
+            if (tableHead && tableBody) {
+                tableHead.style.width = tableBody.offsetWidth + 'px';
+            }
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('insertRowButton').addEventListener('click', function() {
+                addEmptyRow();
+            });
+        });
+
+        function addEmptyRow() {
+            const noDataRow = document.getElementById('no-data');
+            if (noDataRow) {
+                noDataRow.remove();
+            }
+            const newRow = document.createElement('tr');
+            newRow.className = 'new-row';
+            newRow.innerHTML = `
+                <td>
+                    <button class="btn btn-success btn-sm" onclick="saveNewData(this)">Save</button>
+                    <button class="btn btn-secondary btn-sm" onclick="cancelNewRow(this)">Cancel</button>
+                </td>
+                <td></td>
+                <td><input type="text" class="form-control" name="lowest_price"></td>
+                <td><input type="text" class="form-control" name="highest_price"></td>
+                <td><input type="text" class="form-control" name="optionset1"></td>
+                <td><input type="text" class="form-control" name="optionset2"></td>
+                <td><input type="text" class="form-control" name="optionset3"></td>
+                <td><input type="text" class="form-control" name="cost_installment"></td>
+                <td><input type="text" class="form-control" name="month"></td>
+                <td><input type="text" class="form-control" name="warranty"></td>
+                <td><input type="text" class="form-control" name="type"></td>
+                <td><input type="text" class="form-control" name="avg_p"></td>
+                <td><input type="text" class="form-control" name="voucher_value"></td>
+                <td><input type="text" class="form-control" name="percent"></td>
+            `;
+            document.querySelector('#example tbody').appendChild(newRow);
+            $('select').select2({
+                width: '100%',
+                dropdownAutoWidth: true
+            });
+            alignTableHeadAndBody();
+        }
+
+        function saveNewData(button) {
+            const row = button.closest('tr');
+
+            const rowData = {
+                lowest_price: row.querySelector('input[name="lowest_price"]').value,
+                highest_price: row.querySelector('input[name="highest_price"]').value,
+                optionset1: row.querySelector('input[name="optionset1"]').value,
+                optionset2: row.querySelector('input[name="optionset2"]').value,
+                optionset3: row.querySelector('input[name="optionset3"]').value,
+                cost_installment: row.querySelector('input[name="cost_installment"]').value,
+                month: row.querySelector('input[name="month"]').value,
+                warranty: row.querySelector('input[name="warranty"]').value,
+                type: row.querySelector('input[name="type"]').value,
+                avg_p: row.querySelector('input[name="avg_p"]').value,
+                voucher_value: row.querySelector('input[name="voucher_value"]').value,
+                percent: row.querySelector('input[name="percent"]').value,
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/web_set_premium_insert',
+                contentType: 'application/json',
+                data: JSON.stringify({ table_data: [rowData] }),
+                success: function (response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert('Failed to save data.');
+                }
+            });
+        }
+
+        function cancelNewRow(button) {
+            button.closest('tr').remove();
+            const tbody = document.querySelector('#example tbody');
+            if (tbody.children.length === 0) {
+                const noDataRow = document.createElement('tr');
+                noDataRow.id = 'no-data';
+                noDataRow.innerHTML = `<td colspan="14" class="text-center">ไม่มีข้อมูล</td>`;
+                tbody.appendChild(noDataRow);
+            }
+        }
+
+        function editRow(button) {
+            const row = button.closest('tr');
+            row.querySelectorAll('td').forEach((cell, index) => {
+                const content = cell.textContent.trim();
+                let name = '';
+                switch (index) {
+                    case 1: name = 'id'; break;
+                    case 2: name = 'lowest_price'; break;
+                    case 3: name = 'highest_price'; break;
+                    case 4: name = 'optionset1'; break;
+                    case 5: name = 'optionset2'; break;
+                    case 6: name = 'optionset3'; break;
+                    case 7: name = 'cost_installment'; break;
+                    case 8: name = 'month'; break;
+                    case 9: name = 'warranty'; break;
+                    case 10: name = 'type'; break;
+                    case 11: name = 'avg_p'; break;
+                    case 12: name = 'voucher_value'; break;
+                    case 13: name = 'percent'; break;
+                }
+                if (name) {
+                    if (name === 'id') {
+                        cell.innerHTML = `<input type="text" class="form-control non-editable" name="${name}" value="${content}" readonly>`;
+                    } else {
+                        cell.innerHTML = `<input type="text" class="form-control" name="${name}" value="${content}">`;
+                    }
+                }
+            });
+
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-success');
+            button.textContent = 'Save';
+            button.setAttribute('onclick', 'saveEditedData(this)');
+            button.nextElementSibling.classList.remove('btn-danger');
+            button.nextElementSibling.classList.add('btn-secondary');
+            button.nextElementSibling.textContent = 'Cancel';
+            button.nextElementSibling.setAttribute('onclick', 'cancelEdit(this)');
+            $('select').select2({
+                width: '100%',
+                dropdownAutoWidth: true
+            });
+            alignTableHeadAndBody();
+        }
+
+        function saveEditedData(button) {
+            const row = button.closest('tr');
+            const startValue = row.querySelector('input[name="lowest_price"]').value;
+
+            if (!startValue) {
+                alert('กรุณาใส่ราคาขอบล่าง');
+                return;
+            }
+
+            const rowData = {
+                id: row.querySelector('input[name="id"]').value,
+                lowest_price: row.querySelector('input[name="lowest_price"]').value,
+                highest_price: row.querySelector('input[name="highest_price"]').value,
+                optionset1: row.querySelector('input[name="optionset1"]').value,
+                optionset2: row.querySelector('input[name="optionset2"]').value,
+                optionset3: row.querySelector('input[name="optionset3"]').value,
+                cost_installment: row.querySelector('input[name="cost_installment"]').value,
+                month: row.querySelector('input[name="month"]').value,
+                warranty: row.querySelector('input[name="warranty"]').value,
+                type: row.querySelector('input[name="type"]').value,
+                avg_p: row.querySelector('input[name="avg_p"]').value,
+                voucher_value: row.querySelector('input[name="voucher_value"]').value,
+                percent: row.querySelector('input[name="percent"]').value,
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/web_set_premium_update',
+                contentType: 'application/json',
+                data: JSON.stringify({ table_data: [rowData] }),
+                success: function (response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert('Failed to save data.');
+                }
+            });
+        }
+
+        function cancelEdit(button) {
+            location.reload();
+        }
+
+        function deleteRow(id) {
+            if (confirm('คุณแน่ใจหรือว่าต้องการลบแถวนี้?')) {
+                $.post('/web_set_premium_delete', { id: id }, function(response) {
+                    alert(response.message);
+                    location.reload();
+                });
+            }
+        }
+    </script>
+    
+    
+    {% endblock %}
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

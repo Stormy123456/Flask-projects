@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Print POS DATA</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"
+    />
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url("static/images/59142.jpg"); /* เปลี่ยนที่นี่เป็นพาธที่ถูกต้องถ้าต้องการให้มันทำงาน */
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+        align-items: center;
+      }
+
+      header {
+        background-color: rgba(0, 0, 0, 0.7); /* Transparent black */
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      .container {
+        max-width: 80%; /* Set the maximum width to 80% of the viewport */
+        margin: 0 auto;
+        padding: 1rem;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+
+      .form-container {
+        text-align: center;
+      }
+
+      form {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      select,
+      input[type="date"],
+      input[type="text"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+      }
+
+      button {
+        background-color: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+
+      #error-message {
+        display: none;
+        color: red;
+        font-weight: bold;
+      }
+
+      #error-message2 {
+        display: none;
+        color: red;
+        font-weight: bold;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th,
+      td {
+        padding: 8px;
+      }
+
+      #data-table caption {
+        text-align: left;
+      }
+
+      #data-table th {
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.7
+        ); /* Translucent black for table header */
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #fff; /* Text color for table header */
+      }
+
+      #data-table td {
+        background-color: #fff; /* Solid black for table cells */
+        color: #000; /* White text color for table cells */
+        padding: 8px;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #table-container {
+        display: flex;
+        justify-content: space-between;
+        overflow-x: auto; /* Enable horizontal scrolling */
+        max-width: 100%; /* Ensure the table container doesn't exceed its parent's width */
+      }
+
+      #data-table {
+        border-collapse: collapse;
+        margin-top: 20px;
+        overflow: auto;
+        max-height: 400px;
+      }
+
+      #data-table thead {
+        position: sticky;
+        top: 0;
+        background-color: #000;
+        z-index: 1;
+      }
+
+      #data-table th {
+        background-color: rgba(0, 0, 0, 0.7);
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .container-head {
+        text-align: center;
+      }
+
+      .loading-popup {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+
+      .loading-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background: white;
+        border-radius: 5px;
+        text-align: center;
+      }
+
+      .loader {
+        border: 6px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 6px solid #3498db;
+        width: 70px;
+        height: 70px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+      }
+
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% extends 'ar_templates/base.html' %} {% block content %}
+    <div class="container">
+      <div class="container-head">
+        <h1>POS DATA</h1>
+      </div>
+      <form
+        id="filter-form"
+        method="post"
+        enctype="multipart/form-data"
+        style="text-align: center"
+      >
+        <div class="logo">
+          <img src="static/images/logo.png" alt="Logo" width="100" />
+        </div>
+        <div
+          id="loading-spinner"
+          class="loading-popup"
+          style="text-align: center; display: none"
+        >
+          <div class="loading-content">
+            <div class="loader"></div>
+            <p class=>กำลังโหลด</p>
+          </div>
+        </div>
+
+
+        <div
+        id="loading-spinner-export"
+        class="loading-popup"
+        style="text-align: center; display: none"
+      >
+        <div class="loading-content">
+          <div class="loader" style="margin: 0 auto;"></div>
+          <p class="load-process">กำลังโหลด</p>
+        </div>
+      </div>
+
+
+
+
+        <p>
+          <a
+            href="https://docs.google.com/presentation/d/12-INKHssS64pwgaaro_iewacS0V2bOgZj5paYa6IbQU/edit#slide=id.p"
+            target="_blank"
+            >คู่มือการใช้งานเว็ป</a
+          >
+        </p>
+        <div class="form-container">
+          <input type="date" id="date-from" name="date_from" required />
+          <input type="date" id="date-to" name="date_to" required />
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+      <br /><br />
+      <div id="load-buttons">
+        <button onclick="exportToExcel()">Export to Excel</button>
+      </div>
+      <div
+        id="table-container"
+        style="display: flex; justify-content: space-between"
+      >
+        <div style="width: 48%">
+          <table id="data-table">
+            <caption>
+              POS Data
+            </caption>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Order Ref</th>
+                <th>Return From Order</th>
+                <th>Serial Number</th>
+                <th>Internal Reference</th>
+                <th>Receipt Number</th>
+                <th>Full Product Name</th>
+                <th>Quantity</th>
+                <th>Price Subtotal</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+                <th>Customer</th>
+                <th>Branch Code</th>
+                <th>Branch Name</th>
+                <th>Product</th>
+                <th>Login</th>
+                <th>Sale Person</th>
+                <th>Cashier</th>
+                <th>Product Brand</th>
+                <th>Product Model</th>
+                <th>Bank List</th>
+                <th>Months</th>
+                <th>Type</th>
+                <th>Card Number</th>
+                <th>Label</th>
+                <th>Note</th>
+                <th>Internal Note</th>
+                <th>Customer Phone</th>
+                <th>Session</th>
+                <th>Description</th>
+                <th>Complete Address</th>
+                <th>Tax ID</th>
+                <th>Vendors</th>
+                <th>Category</th>
+                <th>Category Code SCG</th>
+                <th>Analytic Account</th>
+                <th>Product UOM</th>
+                <th>Area</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data rows will be inserted here using JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script>
+      var isLoading = false;
+      var isExporting = false;
+      var searchInitialized = false;
+      var currentLimit = 1000; // ค่าเริ่มต้น 1000
+      var current_date_stamp = "";
+      var isfailure = false;
+      const button = document.getElementById("downloadexcel");
+
+      function showLoadingPopup() {
+        isLoading = true;
+        alert("กำลังโหลดข้อมูล !!!");
+      }
+
+      function hideLoadingPopup() {
+        isLoading = false;
+        document.getElementById("loadingPopup").style.display = "none";
+        $("#progress-container").hide();
+        alert("ข้อมูลโหลดเสร็จสิ้น !!!");
+        isLoading = false;
+      }
+
+      function showExportPopup() {
+        console.log(`ShowExportPopup running!!!!!`);
+        $("#loading-spinner").css("display", "block");
+      }
+
+      function hideExportPopup() {
+        $("#loading-spinner").css("display", "none");
+      }
+
+      $(document).ready(function () {
+        var dataTable = $("#data-table").DataTable({
+          pageLength: 10,
+          lengthMenu: [
+            [10, 50, 100, 500],
+            [10, 50, 100, 500],
+          ],
+          searching: false,
+          paging: true,
+          drawCallback: function (settings) {
+            var api = this.api();
+            currentLimit = api.page.len();
+          },
+        });
+
+        var loadedRows = 0;
+        var restRows = 0;
+        var date_stamp = "";
+        var is_data = true;
+        const table = document.getElementById("data-table");
+
+        $("#filter-form").submit(function (event) {
+          dataTable.clear().draw();
+          event.preventDefault();
+          var dateFrom = new Date($("#date-from").val());
+          var dateTo = new Date($("#date-to").val());
+          var diffTime = Math.abs(dateTo - dateFrom);
+          var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          if (dateFrom > dateTo) {
+            alert("Date From must be earlier than Date To.");
+            return;
+          } else if (diffDays > 31) {
+            alert("Date range must not exceed 31 days.");
+            return;
+          }
+          if (isfailure === false) {
+            loadData();
+          }
+        });
+
+        function loadData() {
+          if (!isLoading) {
+            showLoadingPopup();
+            $("#loading-spinner").css("display", "block");
+            $.ajax({
+              type: "GET",
+              url: "/api/get_datapos",
+              data: {
+                date_from: $("#date-from").val(),
+                date_to: $("#date-to").val(),
+              },
+              success: function (response) {
+                console.log("response = ", response);
+                if (response.data_pos.length > 0) {
+                  response.data_pos.forEach(function (item) {
+                    var row = [
+                      item.created_on,
+                      item.order_ref,
+                      item.return_from_order,
+                      item.serial_number,
+                      item.internal_reference,
+                      item.receipt_number,
+                      item.full_product_name,
+                      item.quantity,
+                      item.price_subtotal,
+                      item.unit_price,
+                      item.total,
+                      item.customer,
+                      item.branch_code,
+                      item.branch_name,
+                      item.product,
+                      item.login,
+                      item.sale_person,
+                      item.cashier,
+                      item.product_brand,
+                      item.product_model,
+                      item.bank_list,
+                      item.months,
+                      item.type,
+                      item.card_number,
+                      item.label,
+                      item.note,
+                      item.internal_note,
+                      item.customer_phone,
+                      item.session,
+                      item.description,
+                      item.complete_address,
+                      item.tax_id,
+                      item.vendors,
+                      item.category,
+                      item.category_code_scg,
+                      item.analytic_account,
+                      item.product_uom,
+                      item.area,
+                    ];
+                    dataTable.row.add(row);
+                  });
+                  dataTable.draw();
+                }
+                if (
+                  response.data_pos.length === 0 &&
+                  response.data_pos.length === 0
+                ) {
+                  console.log("Failure !!!");
+                  restRows = 0;
+                  is_data = false;
+                  isLoading = false;
+                  alert("ไม่พบข้อมูล");
+                }
+                $("#loading-spinner").css("display", "none");
+              },
+              error: function () {
+                $("#loading-spinner").css("display", "none");
+                is_data = false;
+              },
+              complete: function () {
+                if (is_data === false) {
+                  isLoading = false;
+                  $("button").prop("disabled", false);
+                } else {
+                  hideLoadingPopup();
+                }
+                $("#loading-spinner").css("display", "none");
+              },
+            });
+          }
+        }
+      });
+
+      function exportToExcel() {
+        $("#loading-spinner-export").css("display", "block");
+        
+        getDatatoExcel().then(function() {
+            $("#loading-spinner-export").css("display", "none");
+        }).catch(function(error) {
+            console.error("An error occurred: ", error);
+            $("#loading-spinner-export").css("display", "none");
+        });
+    }
+    
+    async function getDatatoExcel() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                var isDone = false;
+                const table = $("#data-table").DataTable();
+                const headers = table.columns().header().toArray().map((th) => th.innerText.trim());
+                const dataRows = [];
+                var formData = table.rows().data();
+                const totalRows = table.rows().count();
+                const chunkSize = 100; // ปรับค่าตามต้องการเพื่อควบคุมความถี่ในการเรียก requestAnimationFrame
+    
+                for (let index = 0; index < totalRows; index++) {
+                    const value = formData[index];
+                    const rowData = Object.values(value);
+
+                    // Convert columns I, J, and K (indexes 8, 9, and 10) to numbers
+                    rowData[7] = parseFloat(rowData[7].replace(/,/g, '')); // Assuming Quantity
+                    rowData[8] = parseFloat(rowData[8].replace(/,/g, '')); // Assuming Price Subtotal
+                    rowData[9] = parseFloat(rowData[9].replace(/,/g, '')); // Assuming Unit Price
+                    rowData[10] = parseFloat(rowData[10].replace(/,/g, '')); // Assuming Total
+
+                    dataRows.push(rowData);
+                    
+                    
+                    if (index % chunkSize === 0 || (index+1) == totalRows) {
+                        if ((index + 1) == totalRows){
+                            $("#loading-spinner-export .load-process").text(`Processing row ${totalRows} of ${totalRows}`); 
+                            isDone = true  
+                        }
+                        else{
+                            $("#loading-spinner-export .load-process").text(`Processing row ${index+1} of ${totalRows}`);
+                        }
+                        if(isDone == true){
+                            $("#loading-spinner-export .load-process").text(`Writing for excel...`);
+                        }
+                        await new Promise(resolve => requestAnimationFrame(resolve));
+                    }
+                }
+                const ws = XLSX.utils.aoa_to_sheet([headers]);
+                XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: -1 });
+    
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    
+                const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    
+                const blob = new Blob([wbout], { type: "application/octet-stream" });
+                const url = URL.createObjectURL(blob);
+    
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "POS_DATA.xlsx";
+                a.click();
+    
+                URL.revokeObjectURL(url);
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                  alert('{{ messages[0] }}');
+              {% endif %}
+          {% endwith %}
+      });
+  </script>
+    {% endblock %}
+  </body>
+</html>

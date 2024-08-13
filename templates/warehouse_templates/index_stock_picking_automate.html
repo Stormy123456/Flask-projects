@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stockpicking Automate</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"> </script>
+    <link rel = "stylesheet" href = "https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+    <script src = "https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('static/images/59142.jpg'); /* เปลี่ยนที่นี่เป็นพาธที่ถูกต้องถ้าต้องการให้มันทำงาน */
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent black */
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 80%; /* Set the maximum width to 80% of the viewport */
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .form-container {
+            text-align: center;
+        }
+        
+        form {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        select, input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        button {
+            background-color: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.7); 
+        }
+        
+        #error-message {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        #error-message2 {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            padding: 8px;
+        }
+        
+
+        #data-table caption {
+            text-align: left;
+            font-size: larger; 
+            font-weight: bold;  
+        }
+
+        #data-table th {
+            background-color: #FF0404; /* Translucent black for table header */
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff; /* Text color for table header */
+        }
+        
+        #data-table td {
+            background-color: #fff; /* Solid black for table cells */
+            color: #000; /* White text color for table cells */
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+
+        #data-table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        #data-table thead {
+            position: sticky;
+            top: 0;
+            background-color: #000; 
+            z-index: 1;
+        }
+        
+        #data-table th {
+            background-color: #FF0404;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        
+
+        #data-table2 caption {
+            text-align: left;
+            font-size: larger; 
+            font-weight: bold;  
+        }
+
+        #data-table2 th {
+            background-color: #FF0404; /* Translucent black for table header */
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff; /* Text color for table header */
+        }
+        
+        #data-table2 td {
+            background-color: #fff; /* Solid black for table cells */
+            color: #000; /* White text color for table cells */
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+
+        #data-table2 {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        #data-table2 thead {
+            position: sticky;
+            top: 0;
+            background-color: #000; 
+            z-index: 1;
+        }
+        
+        #data-table2 th {
+            background-color: #FF0404; 
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        #data-tableqty caption {
+            text-align: left;
+            font-size: larger; 
+            font-weight: bold;  
+        }
+
+        #data-tableqty {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+            width: 100%; /* Ensure the table takes up 100% width of its container */
+        }
+    
+        #data-tableqty th {
+            background-color:#10F8E3;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #000000;
+        }
+    
+        #data-tableqty td {
+            background-color: #fff;
+            color: #000;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    
+        #data-tableqty thead {
+            position: sticky;
+            top: 0;
+            background-color: #000;
+            z-index: 1;
+        }
+
+
+
+        #data-tablesku caption {
+            text-align: left;
+            font-size: larger; 
+            font-weight: bold;  
+        }
+
+        #data-tablesku {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+            width: 100%; /* Ensure the table takes up 100% width of its container */
+        }
+    
+        #data-tablesku th {
+            background-color:#10F8E3;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #000000;
+        }
+    
+        #data-tablesku td {
+            background-color: #fff;
+            color: #000;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    
+        #data-tablesku thead {
+            position: sticky;
+            top: 0;
+            background-color: #000;
+            z-index: 1;
+        }
+
+
+        
+
+
+        #data-tablelines caption {
+            text-align: left;
+            font-size: larger; 
+            font-weight: bold;  
+        }
+
+        #data-tablelines {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+            width: 100%; /* Ensure the table takes up 100% width of its container */
+        }
+    
+        #data-tablelines th {
+            background-color: #FF0404; 
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff;
+        }
+    
+        #data-tablelines td {
+            background-color: #fff;
+            color: #000;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    
+        #data-tablelines thead {
+            position: sticky;
+            top: 0;
+            background-color: #FF0404;
+            z-index: 1;
+        }
+
+
+        
+
+        #data-table3 caption {
+            text-align: left;
+            font-size: larger; 
+            font-weight: bold;  
+        }
+
+        #data-table3 th {
+            background-color: rgba(0, 0, 0, 0.7); /* Translucent black for table header */
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #000000; /* Text color for table header */
+        }
+        
+        #data-table3 td {
+            background-color: #fff; /* Solid black for table cells */
+            color: #000; /* White text color for table cells */
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #data-table3 {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        #data-table3 thead {
+            position: sticky;
+            top: 0;
+            background-color: #000; 
+            z-index: 1;
+        }
+        
+        #data-table3 th {
+            background-color:#10F8E3;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+
+        #data-table4 caption {
+            text-align: left;
+            font-size: larger; 
+            font-weight: bold;  
+        }
+
+        #data-table4 th {
+            background-color: rgba(0, 0, 0, 0.7); /* Translucent black for table header */
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #000000; /* Text color for table header */
+        }
+        
+        #data-table4 td {
+            background-color: #fff; /* Solid black for table cells */
+            color: #000; /* White text color for table cells */
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+
+        #data-table4 {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        #data-table4 thead {
+            position: sticky;
+            top: 0;
+            background-color: #000; 
+            z-index: 1;
+        }
+        
+        #data-table4 th {
+            background-color:#10F8E3;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .container-head {
+            text-align: center;
+        }
+
+        .loading-popup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+          }
+          
+          .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            text-align: center;
+          }
+          
+          .loader {
+            border: 6px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 6px solid #3498db;
+            width: 70px;
+            height: 70px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+          }
+          
+          /* Safari */
+          @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }          
+     </style>
+</head>
+<body>
+    {% extends 'warehouse_templates/base.html' %}
+    {% block content %}
+    <div class="container">
+        <div class="container-head">
+            <h1>Automated stock picking check with GI file</h1>
+        </div>
+        <form id="filter-form" method="post" action="/api/get_datapicking" enctype="multipart/form-data" style="text-align: center">
+          <div class="logo">
+            <img src="static/images/logo.png" alt="Logo" width="100">
+          </div>
+          <div id="loading-spinner" class="loading-popup" style="text-align: center; display: none;">
+            <div class="loading-content">
+              <div class="loader"></div>
+              <p>กำลังโหลด</p>
+            </div>
+          </div>
+          <div class="form-container">
+            <input type="file" id="file" name="file" accept=".xls, .xlsx" required>
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+        <br>
+        <div id="table-container" style="display: flex; justify-content: space-between;">
+
+            <div style="width: 48%; ">
+                <table id="data-table">
+                    <caption>Data from Odoo (ไม่มีใน SCG)</caption>
+                    <thead>
+                        <tr>
+                            <th> invoice number </th>
+                            <th> create on </th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data rows will be inserted here using JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+
+            <div style="width: 48%; ">
+                <table id="data-table2">
+                    <caption>Data from SCG (ไม่มีใน Odoo)</caption>
+                    <thead>
+                        <tr>
+                            <th> invoice number </th>
+                            <th> create on </th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data rows will be inserted here using JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div id="load-buttons">
+            <button onclick="exportToExcel1()">Export to Excel</button>
+        </div>
+        <br>
+        <div id="table-container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="width: 100%; overflow: auto;">
+                <table id="data-tableqty">
+                    <caption>Check QTY</caption>
+                    <thead>
+                        <tr>
+                            <th> invoice number </th>
+                            <th> barcode </th>
+                            <th> product </th>
+                            <th> QTY TG </th> 
+                            <th> QTY SCG </th> 
+                            <th> weight </th> 
+                            <th> contact </th>
+                            <th> order type name </th>
+                            <th> internal reference </th> 
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data rows will be inserted here using JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div id="load-buttons">
+            <button onclick="exportToExcelqty()">Export to Excel</button>
+        </div>
+        <br>
+        <div id="table-container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="width: 100%; overflow: auto;">
+                <table id="data-tablesku">
+                    <caption>ข้อมูลที่ Barcode(SKU)ไม่เหมือนกัน แต่ Serian Number ซ้ำกัน</caption>
+                    <thead>
+                        <tr>
+                            <th> product TG</th>
+                            <th> barcode TG</th>
+                            <th> serial number TG</th> 
+                            <th> product SCG</th>
+                            <th> barcode SCG</th>
+                            <th> serial number SCG</th> 
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data rows will be inserted here using JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div id="load-buttons">
+            <button onclick="exportToExcelsku()">Export to Excel</button>
+        </div>
+        <br>
+        <div id="table-container" style="display: flex; justify-content: space-between;">
+
+            <div style="width: 48%; overflow: auto;">
+                <table id="data-table3">
+                    <caption>ข้อมูล TG Serial ไม่ตรงกันกับ SCG</caption>
+                    <thead>
+                        <tr>
+                            <th> invoice number </th>
+                            <th> barcode </th>
+                            <th> create on </th>
+                            <th> serial number </th> 
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data rows will be inserted here using JavaScript -->
+                    </tbody>
+                </table>
+                <br>
+                <div id="load-buttons">
+                    <button onclick="exportToExcel3()">Export to Excel</button>
+                </div>
+            </div>
+
+            <div style="width: 48%; overflow: auto;">
+                <table id="data-table4">
+                    <caption>ข้อมูล SCG Serial ไม่ตรงกันกับ TG</caption>
+                    <thead>
+                        <tr>
+                            <th> invoice number </th>
+                            <th> barcode </th>
+                            <th> create on </th>
+                            <th> serial number </th> 
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data rows will be inserted here using JavaScript -->
+                    </tbody>
+                </table>
+                <br>
+                <div id="load-buttons">
+                    <button onclick="exportToExcel4()">Export to Excel</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div id="table-container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="width: 100%; overflow: auto;">
+                <table id="data-tablelines">
+                    <caption>ข้อมูลที่ Invoice เหมือนกันแต่ Lines ไม่เท่ากัน</caption>
+                    <thead>
+                        <tr>
+                            <th> Invoice Number </th>
+                            <th> TG Line</th>
+                            <th> SCG Line</th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data rows will be inserted here using JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div id="load-buttons">
+            <button onclick="exportToExcellines()">Export to Excel</button>
+        </div>
+    </div>
+    
+    <script>
+        // สร้างตัวแปร searchInitialized และกำหนดให้เป็น false เพื่อระบุว่ายังไม่ได้เริ่มค้นหา
+        var isLoading = false;
+        var isExporting = false;
+        var searchInitialized = false;
+        var currentLimit = 1000; // ค่าเริ่มต้น 1000
+        var current_date_stamp = '';
+        var isfailure = false;
+        const button = document.getElementById("downloadexcel");
+
+
+        function showLoadingPopup() {
+            // แสดง pop-up กำลังทำงาน
+            // เช่น แสดง modal, overlay, spinner, เป็นต้น
+            isLoading = true;
+            // บล็อกปุ่ม submit หรืออื่นๆ ที่คุณไม่ต้องการให้กด
+            // $("button").prop("disabled", true);
+            alert("กำลังโหลดข้อมูล !!!");
+        }  
+
+        function hideLoadingPopup() {
+            // ซ่อน pop-up กำลังทำงาน
+            // ลบ modal, overlay, spinner, เป็นต้น
+            isLoading = false;
+            // เปิดปุ่ม submit หรืออื่นๆ ที่ถูกบล็อกไว้
+            // $("button").prop("disabled", false);
+            document.getElementById('loadingPopup').style.display = 'none';
+            $("#progress-container").hide();
+            alert("ข้อมูลโหลดเสร็จสิ้น !!!");
+            isLoading = false;
+        }
+    
+
+        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX DATA XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        $(document).ready(function() {
+            var dataTable = $('#data-table').DataTable({
+                "pageLength": 100, // Set the initial number of rows to display
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "searching": false,
+                "paging": false, 
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    // currentLimit = api.page.len(); // อัปเดตค่า currentLimit เมื่อมีการเปลี่ยนค่า
+                    currentLimit = 0
+                }
+            });
+
+            var dataTable2 = $('#data-table2').DataTable({
+                "pageLength": 100,
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "searching": false,
+                "paging": false, 
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    currentLimit = 0;
+                }
+            });
+
+            var dataTableqty = $('#data-tableqty').DataTable({
+                "pageLength": 100,
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "searching": false,
+                "paging": false, 
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    currentLimit = 0;
+                }
+            });
+
+            var dataTablesku = $('#data-tablesku').DataTable({
+                "pageLength": 100,
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "searching": false,
+                "paging": false, 
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    currentLimit = 0;
+                }
+            });
+
+            var dataTablelines = $('#data-tablelines').DataTable({
+                "pageLength": 100,
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "searching": false,
+                "paging": false, 
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    currentLimit = 0;
+                }
+            });
+
+            var dataTable3 = $('#data-table3').DataTable({
+                "pageLength": 100,
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "searching": false,
+                "paging": false, 
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    currentLimit = 0;
+                }
+            });
+
+            var dataTable4 = $('#data-table4').DataTable({
+                "pageLength": 100,
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "searching": false,
+                "paging": false, 
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    currentLimit = 0;
+                }
+            });
+
+            // Initialize variables to track loaded rows and total rows
+            var loadedRows = 0;
+            var restRows = 0;
+            var date_stamp = '';
+            var is_data = true
+            const table = document.getElementById("data-table");
+             
+            $('#filter-form').submit(function(event) {
+                dataForExcel1 = [];
+                dataForExcel2 = [];
+                dataForExcelqty = [];
+                dataForExcelsku = [];
+                dataForExcellines = [];
+                dataForExcel3 = [];
+                dataForExcel4 = [];
+                dataTable.clear().draw();
+                dataTable2.clear().draw();
+                dataTableqty.clear().draw();
+                dataTablesku.clear().draw();
+                dataTablelines.clear().draw();
+                dataTable3.clear().draw();
+                dataTable4.clear().draw();
+                event.preventDefault();
+                    
+                // เรียกใช้ loadData() เมื่อกดปุ่ม "Submit"
+                if (isfailure === false){
+                    loadData(); // Load first 100 rows with new filters
+                }
+            });
+            
+
+            // Function to load data
+            function loadData() {
+                if (!isLoading) { // ตรวจสอบว่าไม่มีการโหลดข้อมูลอยู่แล้ว
+                    var formData = new FormData();
+                    formData.append('file', $('#file')[0].files[0]);
+
+                    showLoadingPopup();
+                    $("#loading-spinner").css("display", "block");
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/get_datapicking', // Replace with your API URL
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.data_unique_from_query.length > 0) {
+                                response.data_unique_from_query.forEach(function(item) {
+                                    var row = [
+                                        item.invoice_number,
+                                        item.create_on
+                                    ];
+                                    var row2 = [
+                                        'TG',
+                                        item.invoice_number,
+                                        item.create_on
+                                    ];
+                                    dataTable.row.add(row);
+                                    dataForExcel1.push(row2);
+                                });
+                                dataTable.draw();
+                            }
+
+                            if (response.data_unique_from_excel.length > 0) {
+                                response.data_unique_from_excel.forEach(function(item) {
+                                    var row = [
+                                        item.invoice_number,
+                                        item.create_on
+                                    ];
+                                    var row2 = [
+                                        'SCG',
+                                        item.invoice_number,
+                                        item.create_on
+                                    ];
+                                    dataTable2.row.add(row);
+                                    dataForExcel2.push(row2);
+                                });
+                                dataTable2.draw();
+                            }
+
+        
+
+                            if (response.data_qty_unique.length > 0) {
+                                response.data_qty_unique.forEach(function(item) {
+                                    var row = [
+                                        item.invoice_number,
+                                        item.barcode,
+                                        item.product,
+                                        item.qty_tg,
+                                        item.qty_scg,
+                                        item.weight,
+                                        item.contact,
+                                        item.order_type_name,
+                                        item.internal_reference
+                                    ];
+                                    dataTableqty.row.add(row);
+                                    dataForExcelqty.push(row);
+                                });
+                                dataTableqty.draw();
+                            }
+
+                            if (response.data_sku_unique.length > 0) {
+                                response.data_sku_unique.forEach(function(item) {
+                                    var row = [
+                                        item.product_tg,
+                                        item.barcode_tg,
+                                        item.serial_number_tg,
+                                        item.product_scg,
+                                        item.barcode_scg,
+                                        item.serial_number_scg
+                                    ];
+                                    dataTablesku.row.add(row);
+                                    dataForExcelsku.push(row);
+                                });
+                                dataTablesku.draw();
+                            }
+                            
+                            if (response.stamp_invoice_both_have.length > 0) {
+                                response.stamp_invoice_both_have.forEach(function(item) {
+                                    var row = [
+                                        item.invoice_number,
+                                        item.tg_lines,
+                                        item.scg_lines
+                                    ];
+                                    dataTablelines.row.add(row);
+                                    dataForExcellines.push(row);
+                                });
+                                dataTablelines.draw();
+                            }
+
+                            if (response.data_not_equal_from_data.length > 0) {
+                                response.data_not_equal_from_data.forEach(function(item) {
+                                    var row = [
+                                        item.invoice_number,
+                                        item.barcode,
+                                        item.create_on,
+                                        item.serial_number
+                                    ];
+                                    dataTable3.row.add(row);
+                                    dataForExcel3.push(row);
+                                });
+                                dataTable3.draw();
+                            }
+
+                            if (response.data_not_equal_from_excel.length > 0) {
+                                response.data_not_equal_from_excel.forEach(function(item) {
+                                    var row = [
+                                        item.invoice_number,
+                                        item.barcode,
+                                        item.create_on,
+                                        item.serial_number
+                                    ];
+                                    dataTable4.row.add(row);
+                                    dataForExcel4.push(row);
+                                });
+                                dataTable4.draw();
+                            }
+                            if (response.data_unique_from_query.length === 0 && response.data_unique_from_excel.length === 0) {
+                                restRows = 0
+                                is_data = false
+                                isLoading = false
+                                alert('ไม่พบข้อมูลที่ไม่ตรงกัน.');
+                            }
+                            $("#loading-spinner").css("display", "none");
+                        },
+                        error: function() {
+                            $("#loading-spinner").css("display", "none");
+                            is_data = false
+                        },
+                        complete: function () {
+                            // เมื่อการโหลดเสร็จสิ้น ซ่อน pop-up กำลังทำงาน
+                            if (is_data === false){
+                                isLoading = false;
+                                $("button").prop("disabled", false);
+                            }
+                            else{
+                                hideLoadingPopup();
+                            }
+                            $("#loading-spinner").css("display", "none");
+                        }
+                    });
+                }
+            }
+        });
+        function exportToExcel1() {
+            const data1 = JSON.stringify(dataForExcel1);
+            const data2 = JSON.stringify(dataForExcel2);
+        
+            fetch('/generate_excel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({dataForExcel1: data1, dataForExcel2: data2})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Data_from_Odoo_(ไม่มีใน_SCG).xlsx';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+        }
+        function exportToExcel2() {
+            const table = document.getElementById('data-table2');
+            const thead = table.querySelector('thead');
+            const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
+
+            const ws = XLSX.utils.aoa_to_sheet([headers]); // Add the column headers as the first row
+            const dataRows = dataForExcel2;
+
+            XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: -1 }); // Append the data rows to the worksheet
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Data from Odoo (ไม่มีใน SCG).xlsx';
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+        function exportToExcelqty() {
+            const table = document.getElementById('data-tableqty');
+            const thead = table.querySelector('thead');
+            const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
+
+            const ws = XLSX.utils.aoa_to_sheet([headers]); // Add the column headers as the first row
+            const dataRows = dataForExcelqty;
+
+            XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: -1 }); // Append the data rows to the worksheet
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'QTY ที่ไม่ตรงกัน.xlsx';
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+        function exportToExcelsku() {
+            const table = document.getElementById('data-tablesku');
+            const thead = table.querySelector('thead');
+            const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
+
+            const ws = XLSX.utils.aoa_to_sheet([headers]); // Add the column headers as the first row
+            const dataRows = dataForExcelsku;
+
+            XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: -1 }); // Append the data rows to the worksheet
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'SKU ที่ตรงกันแต่ Serial ไม่ตรงกัน.xlsx';
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+        function exportToExcellines() {
+            fetch('/generate_excellines', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Invoice ที่ตรงกันแต่ Line ไม่ตรงกัน.xlsx'; 
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+        }
+        function exportToExcel3() {
+            const table = document.getElementById('data-table3');
+            const thead = table.querySelector('thead');
+            const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
+
+            const ws = XLSX.utils.aoa_to_sheet([headers]); // Add the column headers as the first row
+            const dataRows = dataForExcel3;
+
+            XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: -1 }); // Append the data rows to the worksheet
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ข้อมูล TG Serial ไม่ตรงกันกับ SCG.xlsx';
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+        function exportToExcel4() {
+            const table = document.getElementById('data-table4');
+            const thead = table.querySelector('thead');
+            const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
+
+            const ws = XLSX.utils.aoa_to_sheet([headers]); // Add the column headers as the first row
+            const dataRows = dataForExcel4;
+
+            XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: -1 }); // Append the data rows to the worksheet
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ข้อมูล SCG Serial ไม่ตรงกันกับ TG.xlsx';
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    alert('{{ messages[0] }}');
+                {% endif %}
+            {% endwith %}
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

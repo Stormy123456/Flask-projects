@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Credit Note E-Tax Excel</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"> </script>
+    <link rel = "stylesheet" href = "https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+    <script src = "https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('static/images/59142.jpg'); /* เปลี่ยนที่นี่เป็นพาทที่ถูกต้องถ้าต้องการให้มันทำงาน */
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent black */
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 80%; /* Set the maximum width to 80% of the viewport */
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        
+        form {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        select, input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        button {
+            background-color: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.7); 
+        }
+        
+        #error-message {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        #error-message2 {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        
+        #data-table th {
+            background-color: rgba(0, 0, 0, 0.7); /* Translucent black for table header */
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff; /* Text color for table header */
+        }
+        
+        #data-table td {
+            background-color: #fff; /* Solid black for table cells */
+            color: #000; /* White text color for table cells */
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+
+        #data-table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        #data-table thead {
+            position: sticky;
+            top: 0;
+            background-color: #000; 
+            z-index: 1;
+        }
+        
+        #data-table th {
+            background-color: rgba(0, 0, 0, 0.7); 
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .container-head {
+            text-align: center;
+        }
+
+        .loading-popup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+          }
+          
+          .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            text-align: center;
+          }
+          
+          .loader {
+            border: 6px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 6px solid #3498db;
+            width: 70px;
+            height: 70px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+          }
+          
+          /* Safari */
+          @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          } 
+     </style>
+</head>
+<body>
+    {% extends 'ar_templates/base.html' %}
+    {% block content %}
+    <div class="container">
+        <div class="container-head">
+            <h1>E-Tax Credit Note</h1>
+            <button onclick="navigateToHomePage()">Home</button>
+            <button onclick="navigateToInvoicePage()">Invoice</button>
+            <button onclick="navigateToCreditNotePage()">Credit Note</button>
+        </div>
+        <br/>
+        <form id="filter-form" style="text-align: center">
+            <div class="logo">
+                <img src="static/images/logo.png" alt="Logo" width="100">
+            </div>
+            <div id="loading-spinner" class="loading-popup" style="text-align: center; display: none;">
+                <div class="loading-content">
+                  <div class="loader"></div>
+                  <p>กำลังโหลด</p>
+                </div>
+            </div>
+            <p><a href="https://docs.google.com/presentation/d/1t-2_J813ADA_P9hwYQpkdr6_HREHbQSKojQ08jwPGro/edit#slide=id.p" target="_blank">>คู่มือการใช้งานเว็ป</a></p>
+            <input type="date" id="date-from" name="date_from">
+            <input type="date" id="date-to" name="date_to">
+            <!-- <label for="currentLimit">กรอกจำนวน Row ที่ต้องการค้นหาในแต่ละครั้ง*</label>
+            <input type="text" name="currentLimit" id="currentLimit"> -->
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+        
+        <br><br>
+        <div id="load-buttons">
+            <button onclick="exportToExcel()">Export to Excel</button>
+        </div>
+        <div id="table-container" style="height: 400px; overflow: auto;">
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th> invoice_number </th>
+                        <th> branch_code </th>
+                        <th> buyer_type </th>
+                        <th> buyer_tax_id </th>
+                        <th> buyer_name </th>
+                        <th> buyer_email </th>
+                        <th> buyer_email_cc </th>
+                        <th> buyer_zipcode </th>
+                        <th> buyer_country </th>
+                        <th> buyer_address_1 </th>
+                        <th> buyer_address_2 </th>
+                        <th> currency </th>
+                        <th> amount </th>
+                        <th> tax_code_type </th>
+                        <th> tax_rate </th>
+                        <th> tax_amount </th>
+                        <th> fee_amount </th>
+                        <th> discount_amount </th>
+                        <th> total_amount_old </th>
+                        <th> total_amount_diff </th>
+                        <th> total_amount_before_tax </th>
+                        <th> total_amount </th>
+                        <th> payment_condition </th>
+                        <th> due_date </th>
+                        <th> save_date </th>
+                        <th> document_reference </th>
+                        <th> document_reference_date </th>
+                        <th> document_reference_code </th>
+                        <th> document_reason </th>
+                        <th> document_reason_code </th>
+                        <th> note </th>
+                        <th> export_date </th>
+                        <th> pdf_password </th>
+                        <th> additional </th>
+                        <th> order_no </th>
+                        <th> product_description </th>
+                        <th> product_quantity </th>
+                        <th> product_unit_code </th>
+                        <th> product_amount </th>
+                        <th> product_amount_vat </th>
+                        <th> product_amount_per_txn </th>
+                        <th> product_total_amount_per_txn </th>
+                     </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows will be inserted here using JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // สร้างตัวแปร searchInitialized และกำหนดให้เป็น false เพื่อระบุว่ายังไม่ได้เริ่มค้นหา
+        var isLoading = false;
+        var isExporting = false;
+        var searchInitialized = false;
+        var currentLimit = 1000; // ค่าเริ่มต้น 1000
+        var current_date_stamp = '';
+        var isfailure = false;
+        let dataForExcel = [];
+        const button = document.getElementById("downloadexcel");
+
+        var current_date_stamp = new Date().toISOString().split('T')[0];
+        // กำหนดค่าเริ่มต้นให้กับ input date
+        document.getElementById('date-from').value = current_date_stamp;
+        document.getElementById('date-to').value = current_date_stamp;
+        
+        // Get the current date in YYYY-MM-DD format
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // Set the current date as the default value for the date inputs
+        document.getElementById('date-from').value = currentDate;
+        document.getElementById('date-to').value = currentDate;
+
+        function showLoadingPopup() {
+            // แสดง pop-up กำลังทำงาน
+            // เช่น แสดง modal, overlay, spinner, เป็นต้น
+            isLoading = true;
+            // บล็อกปุ่ม submit หรืออื่นๆ ที่คุณไม่ต้องการให้กด
+            // $("button").prop("disabled", true);
+            alert("กำลังโหลดข้อมูล !!!");
+        }
+
+        function hideLoadingPopup() {
+            // ซ่อน pop-up กำลังทำงาน
+            // ลบ modal, overlay, spinner, เป็นต้น
+            isLoading = false;
+            // เปิดปุ่ม submit หรืออื่นๆ ที่ถูกบล็อกไว้
+            // $("button").prop("disabled", false);
+            document.getElementById('loadingPopup').style.display = 'none';
+            $("#progress-container").hide();
+            alert("ข้อมูลโหลดเสร็จสิ้น !!!");
+            isLoading = false;
+        }
+
+        function showExportPopup() {
+            isExporting = true;
+            $("#loading-spinner").css("display", "block");
+            alert("กำลังดาวน์โหลดข้อมูล !!!");
+        }
+
+        function hideExportPopup() {
+            isExporting = false;
+            $("#loading-spinner").css("display", "none");
+            alert("การดาวน์โหลดเสร็จสิ้น !!!");
+        }
+    
+        function validateForm() {
+            var dateFrom = document.getElementById("date-from").value;
+            var dateTo = document.getElementById("date-to").value;
+            isfailure = false    
+            // แสดง alert ถ้าไม่ได้เลือกวันที่
+            if (!dateFrom || !dateTo) {
+                alert("กรุณาเลือกวันที่!");
+                isfailure = true
+                isLoading = false
+                return false;
+            }
+        
+            // แสดง alert ถ้าวันเริ่มต้นมากกว่าวันสิ้นสุด
+            if (dateFrom > dateTo) {
+                alert("วันเริ่มต้นต้องมากกว่าวันสิ้นสุดเสมอ!");
+                isfailure = true
+                isLoading = false
+                return false;
+            }
+        
+            return true;
+        }
+
+        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX DATA XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        $(document).ready(function() {
+            var dataTable = $('#data-table').DataTable({
+                "pageLength": 100, // Set the initial number of rows to display
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    // currentLimit = api.page.len(); // อัปเดตค่า currentLimit เมื่อมีการเปลี่ยนค่า
+                    currentLimit = 0
+                }
+            });
+
+            // Initialize variables to track loaded rows and total rows
+            var loadedRows = 0;
+            var restRows = 0;
+            var date_stamp = '';
+            var is_data = true
+            const table = document.getElementById("data-table");
+            
+            $('#filter-form').submit(function(event) {
+                dataTable.clear().draw();
+                dataForExcel = [];
+                validateForm();
+                event.preventDefault();
+                    
+                // เรียกใช้ loadData() เมื่อกดปุ่ม "Submit"
+                if (isfailure === false){
+                    loadData(); // Load first 100 rows with new filters
+                }
+            });
+
+            // Function to load data
+            function loadData() {
+                if (!isLoading) { // ตรวจสอบว่าไม่มีการโหลดข้อมูลอยู่แล้ว
+                    console.log("loadData Function !!!")
+                    console.log('Date From:', $('#date-from').val());
+                    console.log('Date To:', $('#date-to').val());
+                    showLoadingPopup();
+                    $("#loading-spinner").css("display", "block");
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/get_data_cn', // Replace with your API URL
+                        data: {
+                            date_from: $('#date-from').val(),
+                            date_to: $('#date-to').val()
+                        },
+                        success: function(response) {
+                            console.log("response = ",response)
+                            if (response.length > 0) {
+                                console.log("Success !!!")
+                                response.forEach(function(item) {
+                                    var row = [
+                                        item.invoice_number,
+                                        item.branch_code, 
+                                        item.buyer_type,
+                                        item.buyer_tax_id, 
+                                        item.buyer_nam, 
+                                        item.buyer_email, 
+                                        item.buyer_email_cc,
+                                        item.buyer_zipcode, 
+                                        item.buyer_country, 
+                                        item.buyer_address_1, 
+                                        item.buyer_address_2,
+                                        item.currency, 
+                                        item.amount, 
+                                        item.tax_code_type, 
+                                        item.tax_rate, 
+                                        item.tax_amount, 
+                                        item.fee_amount, 
+                                        item.discount_amount, 
+                                        item.total_amount_old, 
+                                        item.total_amount_diff, 
+                                        item.total_amount_before_tax,
+                                        item.total_amount, 
+                                        item.payment_condition, 
+                                        item.due_date, 
+                                        item.save_date,
+                                        item.document_reference, 
+                                        item.document_reference_date, 
+                                        item.document_reference_code, 
+                                        item.document_reason,
+                                        item.document_reason_code,
+                                        item.note, 
+                                        item.export_date, 
+                                        item.pdf_password, 
+                                        item.additional, 
+                                        item.order_no, 
+                                        item.product_description, 
+                                        item.product_quantity, 
+                                        item.product_unit_code, 
+                                        item.product_amount, 
+                                        item.product_amount_vat, 
+                                        item.product_amount_per_txn, 
+                                        item.product_total_amount_per_txn
+                                    ];
+                                    dataTable.row.add(row);
+                                    dataForExcel.push(row);
+                                });            
+                            
+                                dataTable.draw();
+                                loadedRows += response.length;
+                                restRows = response.length
+                                console.log('dataForExcel = ',dataForExcel);
+                                is_data = true
+
+                            }
+                            else{
+                                console.log("Failure !!!")
+                                restRows = 0
+                                is_data = false
+                                isLoading = false
+                                alert('Data not found.');
+                            }
+                            $("#loading-spinner").css("display", "none");
+                        },
+                        error: function() {
+                            $("#loading-spinner").css("display", "none");
+                            is_data = false
+                            
+                        },
+                        complete: function () {
+                            // เมื่อการโหลดเสร็จสิ้น ซ่อน pop-up กำลังทำงาน
+                            if (is_data === false){
+                                isLoading = false;
+                                $("button").prop("disabled", false);
+                            }
+                            else{
+                                hideLoadingPopup();
+                            }
+                            $("#loading-spinner").css("display", "none");
+                        }
+                    });
+                }
+            }
+        });
+
+        function exportToExcel() {
+            const confirmation = confirm("คำเตือน!!! ข้อมูลที่ได้เป็นเพียงข้อมูลดิบจากระบบ Odoo ซึ่งอาจไม่ถูกต้องตามระเบียบของ K-bank กรุณาตรวจสอบและแก้ไขก่อนนำไฟล์ไปอัพโหลด");
+            showExportPopup();
+            if (confirmation) {
+                const table = document.getElementById('data-table');
+                const thead = table.querySelector('thead');
+                const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
+        
+                const ws = XLSX.utils.aoa_to_sheet([headers]); // Add the column headers as the first row
+                const dataRows = dataForExcel;
+        
+                XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: -1 }); // Append the data rows to the worksheet
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        
+                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        
+                const blob = new Blob([wbout], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+        
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'CreditNoteE-Tax.xlsx';
+                a.click();
+        
+                URL.revokeObjectURL(url);
+                hideExportPopup();
+            }
+        }
+    </script>
+    <script>
+        function navigateToHomePage() {
+            window.location.href = "/e_tax_index";
+        }
+    
+        function navigateToInvoicePage() {
+            window.location.href = "/index_inv";
+        }
+    
+        function navigateToCreditNotePage() {
+            window.location.href = "/index_cn";
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    alert('{{ messages[0] }}');
+                {% endif %}
+            {% endwith %}
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

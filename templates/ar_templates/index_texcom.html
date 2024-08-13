@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Excel Sale Report</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"> </script>
+    <link rel = "stylesheet" href = "https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+    <script src = "https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('static/images/59142.jpg'); /* เปลี่ยนที่นี่เป็นพาธที่ถูกต้องถ้าต้องการให้มันทำงาน */
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent black */
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 80%; /* Set the maximum width to 80% of the viewport */
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        
+        form {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        select, input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        button {
+            background-color: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.7); 
+        }
+        
+        #error-message {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        #error-message2 {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        
+        #data-table th {
+            background-color: rgba(0, 0, 0, 0.7); /* Translucent black for table header */
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff; /* Text color for table header */
+        }
+        
+        #data-table td {
+            background-color: #fff; /* Solid black for table cells */
+            color: #000; /* White text color for table cells */
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+
+        #data-table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        #data-table thead {
+            position: sticky;
+            top: 0;
+            background-color: #000; 
+            z-index: 1;
+        }
+        
+        #data-table th {
+            background-color: rgba(0, 0, 0, 0.7); 
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* ซ่อนคอลัมน์ 41, 42, 43, และ 44 */
+        #data-table tbody td:nth-child(41),
+        #data-table tbody td:nth-child(42),
+        #data-table tbody td:nth-child(43),
+        #data-table tbody td:nth-child(44) {
+            display: none;
+        }
+
+        .container-head {
+            text-align: center;
+        }
+
+        .loading-popup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+          }
+          
+          .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            text-align: center;
+          }
+          
+          .loader {
+            border: 6px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 6px solid #3498db;
+            width: 70px;
+            height: 70px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+          }
+          
+          /* Safari */
+          @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          } 
+     </style>
+</head>
+<body>
+    {% extends 'ar_templates/base.html' %}
+    {% block content %}
+    <div class="container">
+        <div class="container-head">
+            <h1>Texcom</h1>
+        </div>
+        <br/>
+        <form id="filter-form" style="text-align: center">
+            <div class="logo">
+                <img src="static/images/logo.png" alt="Logo" width="100">
+            </div>
+            <div id="loading-spinner" class="loading-popup" style="text-align: center; display: none;">
+                <div class="loading-content">
+                  <div class="loader"></div>
+                  <p>กำลังโหลด</p>
+                </div>
+            </div>
+            <p><a href="https://docs.google.com/presentation/d/1g1MSMoBX81XXhPLius1_PC60_lmjPyTfSOlKvX-ux5Y/edit#slide=id.g2db39be1712_0_0" target="_blank">คู่มือการใช้งานเว็ป</a></p>
+            <input type="date" id="date-from" name="date_from">
+            <input type="date" id="date-to" name="date_to">
+            <label for="dropdown">Select an Area:</label>
+            <div id="search-container">
+                <input type="text" id="searchInput" placeholder="Search..." oninput="filterDropdown()">
+            </div>
+            <select id="dropdown" name="dropdown">
+                <option value="">-- Select Option --</option>
+                {% for item in dropdown_data %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+            <div style="text-align: center; display: flex; justify-content: center;">
+                <label style="font-size: 12px; margin-right: 10px;" for="option1">ต้องการดึง Purchase เพื่อดู Order Date และชื่อของ Partner หรือไม่ ?</label>
+                <input type="checkbox" id="option1" name="option" value="option1" checked>
+            </div>
+            <br>
+            <div style="text-align: center">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+        <br><br>
+        <div id="load-buttons">
+            <button onclick="exportToExcel()">Export to Excel</button>
+        </div>
+        <div id="table-container" style="height: 400px; overflow: auto;">
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th> Posting Date </th>
+                    <th> Doc Type </th>
+                    <th> Document No </th>
+                    <th> Tax Invoice Download </th>
+                    <th> External Document No </th>
+                    <th> Sell to Customer Name </th>
+                    <th> Sell to Address </th>
+                    <th> Bill to Customer Name </th>
+                    <th> E File Address </th>
+                    <th> E File Address 2 </th>
+                    <th> Tax ID </th>
+                    <th> Phone </th>
+                    <th> Customer Posting Group </th>
+                    <th> Location Code </th>
+                    <th> Location Name </th>
+                    <th> Location Group Code </th>
+                    <th> Area Manager </th>
+                    <th> Area Name </th>
+                    <th> Salesperson Code </th>
+                    <th> Salesperson Name </th>
+                    <th> No </th>
+                    <th> Full Description </th>
+                    <th> Brand </th>
+                    <th> Model </th>
+                    <th> Quantity </th>
+                    <th> Unit Price </th>
+                    <th> Subtotal Without Tax </th>
+                    <th> Price Subtotal </th>
+                    <th> Unit Cost LCY </th>
+                    <th> Unit of Measure </th>
+                    <th> VAT 7 </th>
+                    <th> Inventory Posting Group </th>
+                    <th> IMEI </th>
+                    <th> Meno </th>
+                    <th> Payment Method </th>
+                    <th> Bank List </th>
+                    <th> Card Number </th>
+                    <th> User ID </th>
+                    <th> Picking Number </th>
+                    <th> Picking State </th>
+                    <th style="display: none;"> Note </th>
+                    <th style="display: none;"> Amount_total </th>
+                    <th style="display: none;"> Date Order </th>
+                    <th style="display: none;"> Partner Name </th>
+                    <!-- <th style="display: none;"> AM_ID </th>
+                    <th style="display: none;"> AML_ID </th>
+                    <th style="display: none;"> SML_ID </th>
+                    <th style="display: none;"> Product_ID </th> -->
+                 </tr>
+            </thead>
+            <tbody>
+                <!-- Data rows will be inserted here using JavaScript -->
+            </tbody>
+        </table>
+        </div>
+    </div>
+    
+    <script>
+        // สร้างตัวแปร searchInitialized และกำหนดให้เป็น false เพื่อระบุว่ายังไม่ได้เริ่มค้นหา
+        var isLoading = false;
+        var isExporting = false;
+        var searchInitialized = false;
+        var currentLimit = 1000; // ค่าเริ่มต้น 1000
+        var current_date_stamp = '';
+        var isfailure = false;
+        let dataForExcel = [];
+        const button = document.getElementById("downloadexcel");
+
+        const option1Checkbox = document.getElementById("option1");
+
+        var current_date_stamp = new Date().toISOString().split('T')[0];
+        // กำหนดค่าเริ่มต้นให้กับ input date
+        document.getElementById('date-from').value = current_date_stamp;
+        document.getElementById('date-to').value = current_date_stamp;
+        
+        // Get the current date in YYYY-MM-DD format
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // Set the current date as the default value for the date inputs
+        document.getElementById('date-from').value = currentDate;
+        document.getElementById('date-to').value = currentDate;
+
+        function showLoadingPopup() {
+            // แสดง pop-up กำลังทำงาน
+            // เช่น แสดง modal, overlay, spinner, เป็นต้น
+            isLoading = true;
+            // บล็อกปุ่ม submit หรืออื่นๆ ที่คุณไม่ต้องการให้กด
+            // $("button").prop("disabled", true);
+            alert("กำลังโหลดข้อมูล !!!");
+        }
+
+        function hideLoadingPopup() {
+            // ซ่อน pop-up กำลังทำงาน
+            // ลบ modal, overlay, spinner, เป็นต้น
+            isLoading = false;
+            // เปิดปุ่ม submit หรืออื่นๆ ที่ถูกบล็อกไว้
+            // $("button").prop("disabled", false);
+            document.getElementById('loadingPopup').style.display = 'none';
+            $("#progress-container").hide();
+            alert("ข้อมูลโหลดเสร็จสิ้น !!!");
+            isLoading = false;
+        }
+    
+        function showExportPopup() {
+            isExporting = true;
+            $("#loading-spinner").css("display", "block");
+            alert("กำลังดาวน์โหลดข้อมูล !!!");
+        }
+
+        function hideExportPopup() {
+            isExporting = false;
+            $("#loading-spinner").css("display", "none");
+            alert("การดาวน์โหลดเสร็จสิ้น !!!");
+        }
+
+        function validateForm() {
+            var dateFrom = document.getElementById("date-from").value;
+            var dateTo = document.getElementById("date-to").value;
+            isfailure = false    
+            // แสดง alert ถ้าไม่ได้เลือกวันที่
+            if (!dateFrom || !dateTo) {
+                alert("กรุณาเลือกวันที่!");
+                isfailure = true
+                isLoading = false
+                return false;
+            }
+        
+            // แสดง alert ถ้าวันเริ่มต้นมากกว่าวันสิ้นสุด
+            if (dateFrom > dateTo) {
+                alert("วันเริ่มต้นต้องมากกว่าวันสิ้นสุดเสมอ!");
+                isfailure = true
+                isLoading = false
+                return false;
+            }
+        
+            if (!searchInitialized) {
+                document.getElementById("search-container").style.display = "block";
+                searchInitialized = true;
+            }
+            return true;
+        }
+
+        const dropdown = document.getElementById("dropdown");
+        const searchInput = document.getElementById("searchInput");
+
+        // เมื่อมีการเลือกตัวเลือกใน dropdown
+        dropdown.addEventListener("change", function() {
+            const selectedOption = dropdown.value;
+            search(selectedOption);
+        });
+
+        // เมื่อผู้ใช้พิมพ์ข้อความใน input (ค้นหาแบบ realtime)
+        searchInput.addEventListener("input", function() {
+            const searchText = searchInput.value;
+            searchRealtime(searchText);
+        });
+
+        // ฟังก์ชันค้นหาข้อมูลตามค่าที่เลือกใน dropdown
+        function search(selectedOption) {
+            // ทำการค้นหาข้อมูลตามค่าที่เลือกใน dropdown
+            // และแสดงผลลัพธ์ที่ต้องการ
+            const selectedData = dropdownData.find(item => item.id === selectedOption);
+            if (selectedData) {
+                // แสดงผลลัพธ์ที่ต้องการ เช่น แสดงข้อมูลในตาราง
+                console.log(selectedData.name);
+            }
+        }
+
+        // ฟังก์ชันค้นหาข้อมูลแบบ realtime
+        function searchRealtime(searchText) {
+            // ทำการค้นหาข้อมูลแบบ realtime โดยค้นหาข้อมูลเมื่อผู้ใช้พิมพ์
+            // และแสดงผลลัพธ์ที่ต้องการในขณะพิมพ์
+            const matchingData = dropdownData.filter(item => item.name.includes(searchText));
+            if (matchingData.length > 0) {
+                // แสดงผลลัพธ์ที่ต้องการ เช่น แสดงรายการตัวเลือกที่ตรงกับค้นหา
+                console.log(matchingData);
+            }
+        }
+    
+        function initializeSearch() {
+            const dropdown = document.getElementById("dropdown");
+            const options = Array.from(dropdown.options);
+            
+            const searchInput = document.createElement("input");
+            searchInput.type = "text";
+            searchInput.placeholder = "Search...";
+            
+            dropdown.parentNode.insertBefore(searchInput, dropdown);
+            
+            searchInput.addEventListener("input", function() {
+                const searchTerm = searchInput.value.toLowerCase();
+    
+                options.forEach(function(option) {
+                    const text = option.textContent.toLowerCase();
+                    const isVisible = text.includes(searchTerm);
+                    option.style.display = isVisible ? "block" : "none";
+                });
+            });
+        }
+        function filterDropdown() {
+            const searchInput = document.getElementById("searchInput");
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            const dropdown = document.getElementById("dropdown");
+            const options = Array.from(dropdown.options);
+            
+            options.forEach(function(option) {
+                const text = option.textContent.toLowerCase();
+                const isVisible = text.includes(searchTerm);
+                option.style.display = isVisible ? "block" : "none";
+            });
+        }
+        
+
+        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX DATA XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        $(document).ready(function() {
+            var dataTable = $('#data-table').DataTable({
+                "pageLength": 100, // Set the initial number of rows to display
+                "lengthMenu": [[10, 50, 100, 500], [10, 50, 100, 500]],
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    // currentLimit = api.page.len(); // อัปเดตค่า currentLimit เมื่อมีการเปลี่ยนค่า
+                    currentLimit = 0
+                }
+            });
+
+            // Initialize variables to track loaded rows and total rows
+            var costData = []; // สร้างตัวแปรเพื่อเก็บข้อมูล cost
+            var paymentData = []; // สร้างตัวแปรเพื่อเก็บข้อมูล payment
+            var loadedRows = 0;
+            var restRows = 0;
+            var date_stamp = '';
+            var aml_id = 0;
+            var sml_id = 0;
+            var is_data = true
+            var radioButton = document.getElementById("option1");
+            var option = '';
+            const table = document.getElementById("data-table");
+            
+            $('#filter-form').submit(function(event) {
+                dataTable.clear().draw();
+                dataForExcel = [];
+                costData = [];
+                paymentData = [];
+                validateForm();
+                event.preventDefault();
+                    
+                // เรียกใช้ loadData() เมื่อกดปุ่ม "Submit"
+                if (isfailure === false){
+                    loadDataCost();
+                    loadDataPayment();
+                    loadData(true,false); // Load first 100 rows with new filters
+                }
+            });
+            function loadDataCost() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/get_data_cost', // แทนที่ด้วย URL API ของคุณ
+                    success: function(response) {
+                        if (response.length > 0) {
+                            costData = response; // เก็บข้อมูล cost ในตัวแปร costData
+                            console.log("costData =",costData);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while loading cost data.');
+                    }
+                });
+            }
+
+            function loadDataPayment() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/get_data_payment', // แทนที่ด้วย URL API ของคุณ
+                    data: {
+                            date_from: $('#date-from').val(),
+                            date_to: $('#date-to').val(),
+                        },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            paymentData = response; // เก็บข้อมูล payment ในตัวแปร paymentData
+                            console.log("paymentData = ",paymentData);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while loading payment data.');
+                    }
+                });
+            }
+
+            // Function to load data
+            function loadData(is_first,limit) {
+
+                if (!isLoading) { // ตรวจสอบว่าไม่มีการโหลดข้อมูลอยู่แล้ว
+                    showLoadingPopup();
+                    if (radioButton.checked) {
+                        option = true
+                    }
+                    else{
+                        option = false
+                    }
+                    $("#loading-spinner").css("display", "block");
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/get_data?limit=' + limit, // Replace with your API URL
+                        data: {
+                            date_from: $('#date-from').val(),
+                            date_to: $('#date-to').val(),
+                            dropdown: $('#dropdown').val(),
+                            option: option,
+                            limit: limit, // Add limit parameter to the API request
+                            // date_stamp: date_stamp, // Add date_stamp parameter to the API request
+                            // is_first: is_first, // Check is first time?
+                            aml_id: aml_id,
+                            sml_id: sml_id
+                        },
+                        success: function(response) {
+                            if (response.length > 0) {
+                                response.forEach(function(item) {
+                                    // แปลงค่าใน item ที่เป็น undefined, null, หรือ 'none' เป็น '-'
+                                    Object.keys(item).forEach(function (key) {
+                                        if (item[key] === undefined || item[key] === null || item[key] === 'none') {
+                                            item[key] = '-';
+                                        }
+                                    });
+                                    var costInfo = costData.find(function(costItem) {
+                                        return costItem.product_id === item.product_id;
+                                    });
+                                    var paymentInfo = paymentData.find(function(paymentItem) {
+                                        return paymentItem.pos_id === item.pos_id;
+                                    });
+                                    var paymentInfo = paymentData.find(function(paymentItem) {
+                                        return paymentItem.pos_id === item.pos_id;
+                                    });
+                                    var row = [
+                                        item.posting_date,
+                                        item.doc_type,
+                                        item.document_no,
+                                        item.tax_invoice_download,
+                                        item.external_document_no,
+                                        item.sell_to_customer_name,
+                                        item.sell_to_address,
+                                        item.bill_to_customer_name,
+                                        item.e_file_address,
+                                        item.e_file_address_2,
+                                        item ? item.tax_id : '-',
+                                        item ? item.phone : '-',
+                                        item.customer_posting_group,
+                                        item.location_code,
+                                        item.location_name,
+                                        item.location_group_code,
+                                        item.area_manager,
+                                        item.area_name,
+                                        item.saleperson_code,
+                                        item.saleperson_name,
+                                        item.no,
+                                        item.full_description,
+                                        item.brand,
+                                        item.model,
+                                        item.quantity,
+                                        item.unit_price,
+                                        item.subtotal_wo_tax,
+                                        item.price_subtotal ,
+                                        costInfo ? costInfo.price_unit : '-',
+                                        item.unit_of_measure,
+                                        item.vat_7,
+                                        item.inventory_posting_group,
+                                        item ? item.imei : '-',
+                                        item ? item.meno : '-',
+                                        paymentInfo ? paymentInfo.payment_methods : '-',  // ใช้ paymentInfo ในการเข้าถึงข้อมูล payment_method
+                                        paymentInfo ? paymentInfo.bank_list : '-',     // ใช้ paymentInfo ในการเข้าถึงข้อมูล bank_list
+                                        paymentInfo ? paymentInfo.card_no : '-',      // ใช้ paymentInfo ในการเข้าถึงข้อมูล card_no
+                                        item.user_id,
+                                        item.picking_number,
+                                        item.picking_state,
+                                        item.note,
+                                        item.amount_total,
+                                        item.po_date_order,
+                                        item.partner_name,
+                                        // item.am_id,
+                                        // item.aml_id,
+                                        // item.sml_id,
+                                        // item.product_id,
+                                        // item.pos_id
+                                    ];
+                                    dataTable.row.add(row);
+                                    // date_stamp = item.posting_date
+                                    dataForExcel.push(row);
+                                    aml_id = item.aml_id
+                                    sml_id = item.sml_id
+                                });            
+                            
+                                dataTable.draw();
+                                // removeDuplicates();
+                                // ซ่อนคอลัมน์
+                                // dataTable.columns([42, 43, 44, 45]).visible(false)
+                                // Updat e loadedRows only when successful API response
+                                loadedRows += response.length;
+                                restRows = response.length
+                                is_data = true
+
+                            }
+                            else{
+                                restRows = 0
+                                is_data = false
+                                isLoading = false
+                                alert('Data not found or an error occurred while loading data.');
+                            }
+                            $("#loading-spinner").css("display", "none");
+                        },
+                        error: function() {
+                            $("#loading-spinner").css("display", "none");
+                            is_data = false
+                            
+                        },
+                        complete: function () {
+                            // เมื่อการโหลดเสร็จสิ้น ซ่อน pop-up กำลังทำงาน
+                            console.log('is_data = ',is_data);
+                            if (is_data === false){
+                                alert('An error occurred while loading data.');
+                                isLoading = false;
+                                $("button").prop("disabled", false);
+                            }
+                            else{
+                                hideLoadingPopup();
+                            }
+                            $("#loading-spinner").css("display", "none");
+                        }
+                    });
+                }
+            }
+            
+            // // Initial data loading
+            // loadData(100); // Load first 100 rows
+
+            // Load More button click event
+            // $('#load-more').on('click', function() {
+            //     if (restRows != 0) {
+            //         loadData(false,currentLimit)
+            //     } else {
+            //         alert('No more data to load.');
+            //     }
+            // });
+            
+            // // Load All button click event
+            // $('#load-all').on('click', function() {
+            //     if (restRows != 0) {
+            //         loadData(false,-1)
+            //     } else {
+            //         alert('All data is already loaded.');
+            //     }
+            // });
+        });
+        // Function remove duplicate data
+        function removeDuplicates() {
+            const table = document.getElementById("data-table");
+            const rows = Array.from(table.querySelectorAll("tr")).slice(1); 
+            const uniqueRows = [];
+            const seenRows = new Set();
+            rows.forEach(row => {
+                const rowData = Array.from(row.querySelectorAll("td")).map(td => td.textContent);
+                const rowKey = rowData.join(""); 
+                if (!seenRows.has(rowKey)) {
+                    uniqueRows.push(row);
+                    seenRows.add(rowKey);
+                }
+            });
+            rows.forEach(row => row.remove());
+            uniqueRows.forEach(row => table.appendChild(row));
+        }
+
+        function exportToExcel() {
+            showExportPopup();
+            const table = document.getElementById('data-table');
+            const thead = table.querySelector('thead');
+            const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
+
+            const ws = XLSX.utils.aoa_to_sheet([headers]); // Add the column headers as the first row
+            const dataRows = dataForExcel;
+
+            XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: -1 }); // Append the data rows to the worksheet
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            
+            a.href = url;
+            a.download = 'SaleReport.xlsx';
+            a.click();
+
+            URL.revokeObjectURL(url);
+            hideExportPopup();
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    alert('{{ messages[0] }}');
+                {% endif %}
+            {% endwith %}
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

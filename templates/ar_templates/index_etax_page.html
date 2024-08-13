@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-tax Home Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"> </script>
+    <link rel = "stylesheet" href = "https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+    <script src = "https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('static/images/59142.jpg'); /* เปลี่ยนที่นี่เป็นพาธที่ถูกต้องถ้าต้องการให้มันทำงาน */
+            background-repeat: no-repeat;
+            background-size: cover;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent black */
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 80%; /* Set the maximum width to 80% of the viewport */
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        form {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        select, input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        button {
+            background-color: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.7); 
+        }
+        
+        #error-message {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        #error-message2 {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        
+        #data-table th {
+            background-color: rgba(0, 0, 0, 0.7); /* Translucent black for table header */
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff; /* Text color for table header */
+        }
+        
+        #data-table td {
+            background-color: #fff; /* Solid black for table cells */
+            color: #000; /* White text color for table cells */
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+
+        #data-table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        #data-table thead {
+            position: sticky;
+            top: 0;
+            background-color: #000; 
+            z-index: 1;
+        }
+        
+        #data-table th {
+            background-color: rgba(0, 0, 0, 0.7); 
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .loading-popup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+          }
+          
+          .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            text-align: center;
+          }
+          
+          .loader {
+            border: 6px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 6px solid #3498db;
+            width: 70px;
+            height: 70px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+          }
+          
+          /* Safari */
+          @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          } 
+     </style>
+</head>
+<body>
+    {% extends 'ar_templates/base.html' %}
+    {% block content %}
+    <div class="container">
+        <h1>ยินดีต้อนรับสู่หน้าเว็ป E-Tax</h1>
+        <div class="logo">
+            <img src="static/images/logo.png" alt="Logo" width="100">
+        </div>
+        <p><a href="https://docs.google.com/presentation/d/1t-2_J813ADA_P9hwYQpkdr6_HREHbQSKojQ08jwPGro/edit#slide=id.p" target="_blank">คู่มือการใช้งานเว็ป</a></p>
+        <div>
+            <button onclick="navigateToHomePage()">Home</button>
+            <button onclick="navigateToInvoicePage()">Invoice</button>
+            <button onclick="navigateToCreditNotePage()">Credit Note</button>
+        </div>
+    </div>
+    <script>
+        function navigateToHomePage() {
+            window.location.href = "/e_tax_index";
+        }
+    
+        function navigateToInvoicePage() {
+            window.location.href = "/index_inv";
+        }
+    
+        function navigateToCreditNotePage() {
+            window.location.href = "/index_cn";
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    alert('{{ messages[0] }}');
+                {% endif %}
+            {% endwith %}
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

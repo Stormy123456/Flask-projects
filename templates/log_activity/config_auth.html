@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config Permission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('static/images/59142.jpg'); /* เปลี่ยนที่นี่เป็นพาทที่ถูกต้องถ้าต้องการให้มันทำงาน */
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 80%; /* Set the maximum width to 80% of the viewport */
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        form {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="search"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background-color: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.7); 
+        }
+    </style>
+</head>
+<body>
+    {% extends 'log_activity/base.html' %}
+    {% block content %}
+    <div class="container">
+        <div class="container-head">
+            <h1>Config Permission</h1>
+        </div>
+        <br/>
+        <div class="form-container">
+            <div class="container-head">
+                <h3>Warehouse&nbsp;</h3>
+            </div>
+            <form id="filter-form-1" method="POST" action="{{ url_for('config_add_permissions_spautomate') }}">
+                <label>Permission of Stockpicking Automate Page</label><br>
+                <input type="search" id="search-box1" placeholder="Search permissions...">
+                <div id="checkbox-container1">
+                    {% for group in user_group %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="items" value="{{ group.id }}" 
+                            {% for checked in user_group_checked %}
+                                {% if group.id == checked.id and checked.id_menu_page == '1' %}checked{% endif %}
+                            {% endfor %}>&nbsp;{{ group.name }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <br/>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="form-container">
+            <div class="container-head">
+                <h3>Accounting&nbsp;</h3>
+            </div>
+            <form id="filter-form-2" method="POST" action="{{ url_for('config_add_permissions_pos_data') }}">
+                <label>Permission of POS data Page</label><br>
+                <input type="search" id="search-box2" placeholder="Search permissions...">
+                <div id="checkbox-container2">
+                    {% for group in user_group %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="items2" value="{{ group.id }}" 
+                            {% for checked in user_group_checked %}
+                                {% if group.id == checked.id and checked.id_menu_page == '2' %}checked{% endif %}
+                            {% endfor %}>&nbsp;{{ group.name }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <br/>
+                <button type="submit">Submit</button>
+            </form>
+            <form id="filter-form--" method="POST" action="{{ url_for('config_add_permissions_etax') }}">
+                <label>Permission of E-TAX page</label><br>
+                <input type="search" id="search-box3" placeholder="Search permissions...">
+                <div id="checkbox-container3">
+                    {% for group in user_group %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="items3" value="{{ group.id }}" 
+                            {% for checked in user_group_checked %}
+                                {% if group.id == checked.id and checked.id_menu_page == '3' %}checked{% endif %}
+                            {% endfor %}>&nbsp;{{ group.name }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <br/>
+                <button type="submit">Submit</button>
+            </form>
+            <form id="filter-form-4" method="POST" action="{{ url_for('config_add_permissions_texcom') }}">
+                <label>Permission of Texcom Page</label><br>
+                <input type="search" id="search-box4" placeholder="Search permissions...">
+                <div id="checkbox-container4">
+                    {% for group in user_group %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="items4" value="{{ group.id }}" 
+                            {% for checked in user_group_checked %}
+                                {% if group.id == checked.id and checked.id_menu_page == '4' %}checked{% endif %}
+                            {% endfor %}>&nbsp;{{ group.name }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <br/>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('search-box1').addEventListener('input', function() {
+            let filter = this.value.toLowerCase();
+            let items = document.querySelectorAll('#checkbox-container1 .checkbox-item');
+            items.forEach(function(item) {
+                let text = item.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        document.getElementById('search-box2').addEventListener('input', function() {
+            let filter = this.value.toLowerCase();
+            let items = document.querySelectorAll('#checkbox-container2 .checkbox-item');
+            items.forEach(function(item) {
+                let text = item.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        document.getElementById('search-box3').addEventListener('input', function() {
+            let filter = this.value.toLowerCase();
+            let items = document.querySelectorAll('#checkbox-container3 .checkbox-item');
+            items.forEach(function(item) {
+                let text = item.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        document.getElementById('search-box4').addEventListener('input', function() {
+            let filter = this.value.toLowerCase();
+            let items = document.querySelectorAll('#checkbox-container4 .checkbox-item');
+            items.forEach(function(item) {
+                let text = item.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

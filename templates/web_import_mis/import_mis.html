@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Invoice E-Tax Excel</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"> </script>
+    <link rel = "stylesheet" href = "https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+    <script src = "https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('static/images/59142.jpg'); /* เปลี่ยนที่นี่เป็นพาธที่ถูกต้องถ้าต้องการให้มันทำงาน */
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent black */
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 80%; /* Set the maximum width to 80% of the viewport */
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .form-container {
+            text-align: center;
+        }
+        
+        form {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        select, input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        button {
+            background-color: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.7); 
+        }
+        
+        #error-message {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        #error-message2 {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            padding: 8px;
+        }
+        
+        .container-head {
+            text-align: center;
+        }
+
+        .loading-popup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+          
+        .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+          
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 6px solid #3498db;
+            width: 70px;
+            height: 70px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+        }
+          
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+          
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+            text-align: center;
+            max-height: 80vh; /* Add this line */
+            overflow-y: auto; /* Add this line */
+        }
+
+        .modal-header, .modal-footer {
+            padding: 10px;
+        }
+
+        .modal-footer {
+            text-align: right;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+     </style>
+</head>
+<body>
+    <br/><br/><br/>
+    <div class="container">
+        <div class="container-head">
+            <h1>Import File Transfer Suggestion Output daily</h1>
+        </div>
+        <form id="filter-form" method="post" action="/api/call_api_import_data_mis" enctype="multipart/form-data" style="text-align: center">
+            <div class="logo">
+                <img src="static/images/logo.png" alt="Logo" width="100">
+            </div>
+            <div id="loading-spinner" class="loading-popup" style="text-align: center; display: none;">
+                <div class="loading-content">
+                    <div class="loader"></div>
+                    <p>กำลังโหลด</p>
+                </div>
+            </div>
+            <div class="form-container">
+                <input type="file" id="file" name="file" accept=".xls, .xlsx" required>
+                <button type="submit" onclick="showLoadingPopup()">Submit</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        var isLoading = false;
+
+        function showLoadingPopup() {
+            isLoading = true;
+            document.getElementById('loading-spinner').style.display = 'flex';
+        }
+
+        function hideLoadingPopup() {
+            document.getElementById('loading-spinner').style.display = 'none';
+        }
+
+        function showModal(message) {
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('myModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    alert('{{ messages[0] }}');
+                {% endif %}
+            {% endwith %}
+        });
+    </script>
+</body>
+</html>
