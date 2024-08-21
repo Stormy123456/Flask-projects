@@ -82,92 +82,76 @@
     {% block title %}Set Premium{% endblock %}
     {% block content %}
     <div class="container-fluid px-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
-
-                    <div class="card-header pb-0">
-                        <div class="d-flex justify-content-between">
-                            <h6 class="">Set Premium</h6>
-                            <div class="text-end">
-                               
-                                <button class="btn btn-success mb-3" id="insertRowButton">Insert</button>
-                            </div>
-
-                        </div>
-
-                    </div>
-                    <div class="card-body px-4 pt-0 pb-2">
-                        <div class="table-wrapper">
-                            <table id="example" class="display nowrap" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>ID</th>
-                                        <th>ราคาขอบล่าง</th>
-                                        <th>ราคาขอบบน</th>
-                                        <th>ก๊อก 2 Set 1</th>
-                                        <th>ก๊อก 2 Set 2</th>
-                                        <th>ก๊อก 2 Set 3</th>
-                                        <th>%ผ่อน</th>
-                                        <th>เดือนผ่อน</th>
-                                        <th>ประกันจอ</th>
-                                        <th>Type</th>
-                                        <th>AVG.P</th>
-                                        <th>มูลค่า Voucher</th>
-                                        <th></th>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th><select id="type-filter"><option value="">All</option></select></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for row in data %}
-                                        <tr>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm" onclick='editRow(this)'>Edit</button>
-                                                <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">Delete</button>
-                                            </td>
-                                            <td>{{ row.id }}</td>
-                                            <td>{{ row.lowest_price }}</td>
-                                            <td>{{ row.highest_price }}</td>
-                                            <td>{{ row.optionset1 }}</td>
-                                            <td>{{ row.optionset2 }}</td>
-                                            <td>{{ row.optionset3 }}</td>
-                                            <td>{{ row.cost_installment }}</td>
-                                            <td>{{ row.month }}</td>
-                                            <td>{{ row.warranty }}</td>
-                                            <td>{{ row.type }}</td>
-                                            <td>{{ row.avg_p }}</td>
-                                            <td>{{ row.voucher_value }}</td>
-                                            <td>{{ row.percent }}</td>
-                                        </tr>
-                                    {% else %}
-                                        <tr id="no-data">
-                                            <td colspan="14" class="text-center">ไม่มีข้อมูล</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <h1 class="mt-4">Set Premium</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Set Premium</li>
+        </ol>
+        <button class="btn btn-success mb-3" id="insertRowButton">Insert</button>
+        <div class="table-wrapper">
+            <table id="example" class="display nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>ID</th>
+                        <th>ราคาขอบล่าง</th>
+                        <th>ราคาขอบบน</th>
+                        <th>ก๊อก 2 Set 1</th>
+                        <th>ก๊อก 2 Set 2</th>
+                        <th>ก๊อก 2 Set 3</th>
+                        <th>%ผ่อน</th>
+                        <th>เดือนผ่อน</th>
+                        <th>ประกันจอ</th>
+                        <th>Type</th>
+                        <th>AVG.P</th>
+                        <th>มูลค่า Voucher</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th><select id="type-filter"><option value="">All</option></select></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick='editRow(this)'>Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">Delete</button>
+                            </td>
+                            <td>{{ row.id }}</td>
+                            <td>{{ row.lowest_price }}</td>
+                            <td>{{ row.highest_price }}</td>
+                            <td>{{ row.optionset1 }}</td>
+                            <td>{{ row.optionset2 }}</td>
+                            <td>{{ row.optionset3 }}</td>
+                            <td>{{ row.cost_installment }}</td>
+                            <td>{{ row.month }}</td>
+                            <td>{{ row.warranty }}</td>
+                            <td>{{ row.type }}</td>
+                            <td>{{ row.avg_p }}</td>
+                            <td>{{ row.voucher_value }}</td>
+                            <td>{{ row.percent }}</td>
+                        </tr>
+                    {% else %}
+                        <tr id="no-data">
+                            <td colspan="14" class="text-center">ไม่มีข้อมูล</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-      
     </div>
 
     <script>
