@@ -30,8 +30,6 @@ def add_data():
 def update_data(id):
     column = request.form['column']
     value = request.form['value']
-    print("column = ",column)
-    print("value = ",value)
     try:
         connection = pyodbc.connect(db_test)
         cursor = connection.cursor()
