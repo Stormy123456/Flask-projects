@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="th" dir="ltr">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cost and Status</title>
     <!-- Include DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <!-- Include jQuery -->
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <!-- Include DataTables JS -->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js">
-    </script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <!-- Include Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Include Select2 JS -->
@@ -20,220 +18,145 @@
         .table-wrapper {
             overflow-x: auto;
         }
-
         table {
             border-collapse: collapse;
             width: 100%;
         }
-
-        th,
-        td {
+        th, td {
             padding: 8px;
             text-align: left;
             white-space: nowrap;
         }
-
         th {
             background-color: #ffffff;
         }
-
         .non-editable {
             background-color: #e9ecef;
             pointer-events: none;
             opacity: 0.7;
         }
-
         .filter-column {
             min-width: 150px;
         }
-
         .percentage-input-wrapper {
             display: flex;
             align-items: center;
         }
-
         .percentage-symbol {
             margin-left: 5px;
         }
-
         .dataTables_wrapper {
             width: 100%;
             overflow: hidden;
         }
-
         .dataTables_scrollHeadInner {
             width: 100% !important;
         }
-
         .dataTables_scrollBody {
             width: 100% !important;
         }
-
         select.form-control {
             width: 100%;
         }
-
-        .form-control,
-        .percentage-input-wrapper {
+        .form-control, .percentage-input-wrapper {
             box-sizing: border-box;
         }
-
-        .table th,
-        .table td {
+        .table th, .table td {
             text-align: left;
         }
-
         /* ปรับความสูงของ select2 */
         .select2-container .select2-selection--single {
             height: 38px;
         }
-
         .select2-container--default .select2-selection--single .select2-selection__rendered {
             white-space: normal;
             word-wrap: break-word;
         }
-
-        .table td input,
-        .table td select {
+        .table td input, .table td select {
             width: 100%;
         }
     </style>
 </head>
-
 <body>
-    {% extends "web_promotion/base.html" %} {% block title %}Cost & Status{%
-    endblock %} {% block content %}
+    {% extends "web_promotion/base.html" %}
+    {% block title %}Cost & Status{% endblock %}
+    {% block content %}
     <div class="container-fluid px-4">
-        <!-- <h1 class="mt-4">Cost & Status</h1>
+        <h1 class="mt-4">Cost & Status</h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item active">Cost & Status</li>
-        </ol> -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
-                    <div class="card-header pb-0">
-                        <div class="d-flex justify-content-between">
-                            <h6 class>Cost & Status</h6>
-                            <div class="text-end">
-                                <button class="btn btn-success mb-3" id="insertRowButton">
-                                    Insert
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body px-4 pt-0 pb-2">
-                        <div class="table-wrapper">
-                            <table id="example" class="display nowrap" style="width: 100%">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th style="width: 150px">ID</th>
-                                        <th>Start</th>
-                                        <th>End</th>
-                                        <th>Brand</th>
-                                        <th>Model SKU</th>
-                                        <th>Price RRP</th>
-                                        <th>Margin</th>
-                                        <th>Cost</th>
-                                        <th>Timestamp</th>
-                                        <th>Status</th>
-                                        <th>Status Cost</th>
-                                        <th>Stock Remaining</th>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th>
-                                            <select class="form-control" id="brand-filter">
-                                                <option value>All</option>
-                                            </select>
-                                        </th>
-                                        <th>
-                                            <select class="form-control" id="model-sku-filter">
-                                                <option value>All</option>
-                                            </select>
-                                        </th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th>
-                                            <select class="form-control" id="status-filter">
-                                                <option value>All</option>
-                                            </select>
-                                        </th>
-                                        <th>
-                                            <select class="form-control" id="status-cost-filter">
-                                                <option value>All</option>
-                                            </select>
-                                        </th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for row in data %}
-                                    <tr>
-                                        <td>
-                                            <button class="btn btn-primary btn-sm" onclick="editRow(this)">
-                                                Edit
-                                            </button>
-                                            <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">
-                                                Delete
-                                            </button>
-                                        </td>
-                                        <td>{{ row.id }}</td>
-                                        <td>{{ row.start }}</td>
-                                        <td>{{ row.end }}</td>
-                                        <td>{{ row.brand }}</td>
-                                        <td>{{ row.model_sku }}</td>
-                                        <td>
-                                            {{ row.price_rrp if row.price_rrp not in [None, 'NaN']
-                        else "" }}
-                                        </td>
-                                        <td>
-                                            {{ row.margin if row.margin not in [None, 'NaN'] else ""
-                        }}
-                                        </td>
-                                        <td>
-                                            {{ row.cost_b if row.cost_b not in [None, 'NaN'] else ""
-                        }}
-                                        </td>
-                                        <td>{{ row.timestamp }}</td>
-                                        <td>
-                                            {{ row.status if row.status not in [None, 'NaN'] else ""
-                        }}
-                                        </td>
-                                        <td>
-                                            {{ row.status_cost if row.status_cost not in [None,
-                        'NaN'] else "" }}
-                                        </td>
-                                        <td>
-                                            {{ row.stock_qty if row.stock_qty not in [None, 'NaN']
-                        else "" }}
-                                        </td>
-                                    </tr>
-                                    {% else %}
-                                    <tr id="no-data">
-                                        <td colspan="13" class="text-center">ไม่มีข้อมูล</td>
-                                        <!-- ปรับ colspan ให้ตรงกับจำนวนคอลัมน์ -->
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        </ol>
+        <button class="btn btn-success mb-3" id="insertRowButton">Insert</button>
+        <div class="table-wrapper">
+            <table id="example" class="display nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>ID</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Brand</th>
+                        <th>Model SKU</th>
+                        <th>Price RRP</th>
+                        <th>Margin</th>
+                        <th>Cost</th>
+                        <th>Timestamp</th>
+                        <th>Status</th>
+                        <th>Status Cost</th>
+                        <th>Stock Remaining</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th><select id="brand-filter"><option value="">All</option></select></th>
+                        <th><select id="model-sku-filter"><option value="">All</option></select></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th><select id="status-filter"><option value="">All</option></select></th>
+                        <th><select id="status-cost-filter"><option value="">All</option></select></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick='editRow(this)'>Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">Delete</button>
+                            </td>
+                            <td>{{ row.id }}</td>
+                            <td>{{ row.start }}</td>
+                            <td>{{ row.end }}</td>
+                            <td>{{ row.brand }}</td>
+                            <td>{{ row.model_sku }}</td>
+                            <td>{{ row.price_rrp if row.price_rrp not in [None, 'NaN'] else "" }}</td>
+                            <td>{{ row.margin if row.margin not in [None, 'NaN'] else "" }}</td>
+                            <td>{{ row.cost_b if row.cost_b not in [None, 'NaN'] else "" }}</td>
+                            <td>{{ row.timestamp }}</td>
+                            <td>{{ row.status if row.status not in [None, 'NaN'] else "" }}</td>
+                            <td>{{ row.status_cost if row.status_cost not in [None, 'NaN'] else "" }}</td>
+                            <td>{{ row.stock_qty if row.stock_qty not in [None, 'NaN'] else "" }}</td>
+                        </tr>
+                    {% else %}
+                        <tr id="no-data">
+                            <td colspan="13" class="text-center">ไม่มีข้อมูล</td> <!-- ปรับ colspan ให้ตรงกับจำนวนคอลัมน์ -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                
+            </table>
         </div>
     </div>
 
     <script>
         // Define odoo_product as a JavaScript object
         const odoo_product = {{ odoo_product | tojson }};
-
-        $(document).ready(function () {
+        
+        $(document).ready(function() {
             var table = $('#example').DataTable({
                 scrollX: true,
                 scrollY: '500px',
@@ -241,41 +164,40 @@
                 paging: false,
                 info: false,
                 autoWidth: false,
-                columnDefs: [{
-                    width: '20%',
-                    targets: 5
-                }]
+                columnDefs: [
+                    { width: '20%', targets: 5 }
+                ]
             });
-
+    
             function populateDropdown(columnIndex, dropdownId) {
                 var uniqueData = [];
-                table.column(columnIndex).data().unique().sort().each(function (d) {
+                table.column(columnIndex).data().unique().sort().each(function(d) {
                     uniqueData.push(d);
                 });
-
-                $.each(uniqueData, function (index, value) {
+    
+                $.each(uniqueData, function(index, value) {
                     $(dropdownId).append('<option value="' + value + '">' + value + '</option>');
                 });
             }
-
+    
             populateDropdown(4, '#brand-filter');
             populateDropdown(5, '#model-sku-filter');
             populateDropdown(10, '#status-filter');
             populateDropdown(11, '#status-cost-filter');
-
+    
             $('select').select2({
                 width: '100%',
                 dropdownAutoWidth: true
             });
-
-            $('select').on('change', function () {
+    
+            $('select').on('change', function() {
                 var columnIndex = $(this).parent().index();
                 var value = $.fn.dataTable.util.escapeRegex($(this).val());
                 table.column(columnIndex).search(value ? '^' + value + '$' : '', true, false).draw();
             });
-
+    
             // Update brand when model_sku changes
-            $('#model-sku-filter').on('change', function () {
+            $('#model-sku-filter').on('change', function() {
                 var selectedModelSKU = $(this).val();
                 var brand = '';
                 for (var i = 0; i < odoo_product.length; i++) {
@@ -287,13 +209,13 @@
                 $('#brand-filter').val(brand).trigger('change');
             });
         });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('insertRowButton').addEventListener('click', function () {
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('insertRowButton').addEventListener('click', function() {
                 addEmptyRow();
             });
         });
-
+    
         function addEmptyRow() {
             const noDataRow = document.getElementById('no-data');
             if (noDataRow) {
@@ -302,51 +224,51 @@
             const newRow = document.createElement('tr');
             newRow.className = 'new-row';
             newRow.innerHTML = `
-          <td>
-              <button class="btn btn-success btn-sm" onclick="saveNewData(this)">Save</button>
-              <button class="btn btn-secondary btn-sm" onclick="cancelNewRow(this)">Cancel</button>
-          </td>
-          <td style="width: 150px;"></td>
-          <td><input type="date" class="form-control" placeholder="dd-mm-yyyy" name="start"></td>
-          <td style="width: 150px;"><input type="date" class="form-control" placeholder="dd-mm-yyyy" name="end"></td>
-          <td style="width: 150px;"><input type="text" class="form-control" name="brand" readonly></td>
-          <td style="width: 150px;">
-              <select class="form-select" name="model_sku" onchange="updateBrand(this)">
-                  <option value="">Select Model</option>
-                  {% for product in odoo_product %}
-                      <option value="{{ product.name }}">{{ product.name }}</option>
-                  {% endfor %}
-              </select>
-          </td>
-          <td><input type="number" class="form-control" name="price_rrp" step="0.01"></td>
-          <td>
-              <div class="percentage-input-wrapper">
-                  <input type="number" class="form-control percentage-input" name="margin" min="0" max="100"><span class="percentage-symbol">%</span>
-              </div>
-          </td>
-          <td><input type="number" class="form-control" name="cost_b" step="0.01"></td>
-          <td></td>
-          <td><input type="text" class="form-control" name="status" readonly></td>
-          <td><input type="text" class="form-control" name="status_cost"></td>
-          <td><input type="text" class="form-control" name="stock_qty" value="" readonly></td>
-      `;
+                <td>
+                    <button class="btn btn-success btn-sm" onclick="saveNewData(this)">Save</button>
+                    <button class="btn btn-secondary btn-sm" onclick="cancelNewRow(this)">Cancel</button>
+                </td>
+                <td></td>
+                <td><input type="date" class="form-control" placeholder="dd-mm-yyyy" name="start"></td>
+                <td><input type="date" class="form-control" placeholder="dd-mm-yyyy" name="end"></td>
+                <td><input type="text" class="form-control" name="brand" readonly></td>
+                <td>
+                    <select class="form-control" name="model_sku" onchange="updateBrand(this)">
+                        <option value="">Select Model SKU</option>
+                        {% for product in odoo_product %}
+                            <option value="{{ product.name }}">{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="number" class="form-control" name="price_rrp" step="0.01"></td>
+                <td>
+                    <div class="percentage-input-wrapper">
+                        <input type="number" class="form-control percentage-input" name="margin" min="0" max="100"><span class="percentage-symbol">%</span>
+                    </div>
+                </td>
+                <td><input type="number" class="form-control" name="cost_b" step="0.01"></td>
+                <td></td>
+                <td><input type="text" class="form-control" name="status" readonly></td>
+                <td><input type="text" class="form-control" name="status_cost"></td>
+                <td><input type="text" class="form-control" name="stock_qty" value="" readonly></td> 
+            `;
             document.querySelector('#example tbody').appendChild(newRow);
             $('select').select2({
                 width: '100%',
                 dropdownAutoWidth: true
             });
             alignTableHeadAndBody();
-        }
-
+        }        
+    
         function saveNewData(button) {
             const row = button.closest('tr');
             const startValue = row.querySelector('input[name="start"]').value;
-
+        
             if (!startValue) {
                 alert('กรุณาใส่วันที่เริ่มต้น');
                 return;
             }
-
+        
             const rowData = {
                 start: row.querySelector('input[name="start"]').value,
                 end: row.querySelector('input[name="end"]').value,
@@ -357,16 +279,14 @@
                 cost_b: parseFloat(row.querySelector('input[name="cost_b"]').value).toFixed(2),
                 status: row.querySelector('input[name="status"]').value,
                 status_cost: row.querySelector('input[name="status_cost"]').value,
-                stock_qty: row.querySelector('input[name="stock_qty"]').value
+                stock_qty: row.querySelector('input[name="stock_qty"]').value  
             };
-
+        
             $.ajax({
                 type: 'POST',
                 url: '/web_promotion_cost_insert',
                 contentType: 'application/json',
-                data: JSON.stringify({
-                    table_data: [rowData]
-                }),
+                data: JSON.stringify({ table_data: [rowData] }),
                 success: function (response) {
                     alert(response.message);
                     location.reload();
@@ -377,7 +297,7 @@
             });
         }
 
-
+    
         function cancelNewRow(button) {
             button.closest('tr').remove();
             const tbody = document.querySelector('#example tbody');
@@ -388,7 +308,7 @@
                 tbody.appendChild(noDataRow);
             }
         }
-
+    
         function editRow(button) {
             const row = button.closest('tr');
             const currentModelSKU = row.querySelector('td:nth-child(6)').textContent.trim();
@@ -396,81 +316,49 @@
                 const content = cell.textContent.trim();
                 let name = '';
                 switch (index) {
-                    case 1:
-                        name = 'id';
-                        break;
-                    case 2:
-                        name = 'start';
-                        break;
-                    case 3:
-                        name = 'end';
-                        break;
-                    case 4:
-                        name = 'brand';
-                        break;
-                    case 5:
-                        name = 'model_sku';
-                        break;
-                    case 6:
-                        name = 'price_rrp';
-                        break;
-                    case 7:
-                        name = 'margin';
-                        break;
-                    case 8:
-                        name = 'cost_b';
-                        break;
-                    case 9:
-                        name = 'timestamp';
-                        break;
-                    case 10:
-                        name = 'status';
-                        break;
-                    case 11:
-                        name = 'status_cost';
-                        break;
-                    case 12:
-                        name = 'stock_qty';
-                        break;
+                    case 1: name = 'id'; break;
+                    case 2: name = 'start'; break;
+                    case 3: name = 'end'; break;
+                    case 4: name = 'brand'; break;
+                    case 5: name = 'model_sku'; break;
+                    case 6: name = 'price_rrp'; break;
+                    case 7: name = 'margin'; break;
+                    case 8: name = 'cost_b'; break;
+                    case 9: name = 'timestamp'; break;
+                    case 10: name = 'status'; break;
+                    case 11: name = 'status_cost'; break;
+                    case 12: name = 'stock_qty'; break;
                 }
                 if (name) {
                     if (name === 'id' || name === 'timestamp') {
-                        cell.innerHTML =
-                            `<input type="text" class="form-control non-editable" name="${name}" value="${content}" readonly>`;
+                        cell.innerHTML = `<input type="text" class="form-control non-editable" name="${name}" value="${content}" readonly>`;
                     } else if (name === 'start' || name === 'end') {
-                        cell.innerHTML =
-                            `<input type="date" class="form-control" name="${name}" value="${content}">`;
+                        cell.innerHTML = `<input type="date" class="form-control" name="${name}" value="${content}">`;
                     } else if (name === 'price_rrp' || name === 'cost_b') {
-                        cell.innerHTML =
-                            `<input type="number" class="form-control" name="${name}" value="${parseFloat(content).toFixed(2)}" step="0.01">`;
+                        cell.innerHTML = `<input type="number" class="form-control" name="${name}" value="${parseFloat(content).toFixed(2)}" step="0.01">`;
                     } else if (name === 'margin') {
                         cell.innerHTML = `
-                      <div class="percentage-input-wrapper">
-                          <input type="number" class="form-control percentage-input" name="${name}" value="${parseInt(content, 10)}" min="0" max="100">
-                          <span class="percentage-symbol">%</span>
-                      </div>
-                  `;
+                            <div class="percentage-input-wrapper">
+                                <input type="number" class="form-control percentage-input" name="${name}" value="${parseInt(content, 10)}" min="0" max="100">
+                                <span class="percentage-symbol">%</span>
+                            </div>
+                        `;
                     } else if (name === 'model_sku') {
-                        let options = '<option value="">Select Model</option>';
+                        let options = '<option value="">Select Model SKU</option>';
                         odoo_product.forEach(product => {
-                            options +=
-                                `<option value="${product.name}" ${product.name === currentModelSKU ? 'selected' : ''}>${product.name}</option>`;
+                            options += `<option value="${product.name}" ${product.name === currentModelSKU ? 'selected' : ''}>${product.name}</option>`;
                         });
-                        cell.innerHTML =
-                            `<select class="form-control" name="${name}" onchange="updateBrand(this)">${options}</select>`;
+                        cell.innerHTML = `<select class="form-control" name="${name}" onchange="updateBrand(this)">${options}</select>`;
                     } else if (name === 'status') {
-                        cell.innerHTML =
-                            `<input type="text" class="form-control" name="${name}" value="${content}" readonly>`;
+                        cell.innerHTML = `<input type="text" class="form-control" name="${name}" value="${content}" readonly>`;
                     } else if (name === 'stock_qty') {
-                        cell.innerHTML =
-                            `<input type="text" class="form-control" name="${name}" value="${content}" readonly>`;
+                        cell.innerHTML = `<input type="text" class="form-control" name="${name}" value="${content}" readonly>`;
                     } else {
-                        cell.innerHTML =
-                            `<input type="text" class="form-control" name="${name}" value="${content}">`;
+                        cell.innerHTML = `<input type="text" class="form-control" name="${name}" value="${content}">`;
                     }
                 }
             });
-
+    
             button.classList.remove('btn-primary');
             button.classList.add('btn-success');
             button.textContent = 'Save';
@@ -485,16 +373,16 @@
             });
             alignTableHeadAndBody();
         }
-
+    
         function saveEditedData(button) {
             const row = button.closest('tr');
             const startValue = row.querySelector('input[name="start"]').value;
-
+    
             if (!startValue) {
                 alert('กรุณาใส่วันที่เริ่มต้น');
                 return;
             }
-
+    
             const rowData = {
                 id: row.querySelector('input[name="id"]').value,
                 start: row.querySelector('input[name="start"]').value,
@@ -508,14 +396,12 @@
                 status_cost: row.querySelector('input[name="status_cost"]').value,
                 stock_qty: row.querySelector('input[name="stock_qty"]').value || ""
             };
-
+    
             $.ajax({
                 type: 'POST',
                 url: '/web_promotion_cost_update',
                 contentType: 'application/json',
-                data: JSON.stringify({
-                    table_data: [rowData]
-                }),
+                data: JSON.stringify({ table_data: [rowData] }),
                 success: function (response) {
                     alert(response.message);
                     location.reload();
@@ -525,67 +411,63 @@
                 }
             });
         }
-
+    
         function cancelEdit(button) {
             location.reload();
         }
-
+    
         function deleteRow(id) {
             if (confirm('คุณแน่ใจหรือว่าต้องการลบแถวนี้?')) {
-                $.post('/web_promotion_cost_delete', {
-                    id: id
-                }, function (response) {
+                $.post('/web_promotion_cost_delete', { id: id }, function(response) {
                     alert(response.message);
                     location.reload();
                 });
             }
         }
-
+    
         function updateBrand(selectElement) {
             const selectedModelSKU = selectElement.value;
             const row = selectElement.closest('tr');
             const brandInput = row.querySelector('input[name="brand"]');
             const statusInput = row.querySelector('input[name="status"]');
             const stockQtyInput = row.querySelector('input[name="stock_qty"]');
-
+        
             for (const product of odoo_product) {
                 if (product.name === selectedModelSKU) {
                     brandInput.value = product.brand;
                     statusInput.value = product.status;
-
+        
                     // ดึงข้อมูล Stock_qty
                     $.ajax({
                         type: 'POST',
-                        url: '/get_stock_qty', // ตั้งค่า URL ที่ต้องการส่งไปหลังบ้าน
+                        url: '/get_stock_qty',  // ตั้งค่า URL ที่ต้องการส่งไปหลังบ้าน
                         contentType: 'application/json',
-                        data: JSON.stringify({
-                            product_id: product.id
-                        }), // ส่ง pt.id ไปหลังบ้าน
-                        success: function (response) {
+                        data: JSON.stringify({ product_id: product.id }), // ส่ง pt.id ไปหลังบ้าน
+                        success: function(response) {
                             stockQtyInput.value = response.remaining_qty; // ตั้งค่า Stock_qty
                         },
-                        error: function (xhr, status, error) {
+                        error: function(xhr, status, error) {
                             alert('Failed to retrieve stock quantity.');
                         }
                     });
-
+        
                     break;
                 }
             }
-        }
-
+        }        
+    
         function alignTableHeadAndBody() {
             const tableHead = document.querySelector('.dataTables_scrollHeadInner table');
             const tableBody = document.querySelector('.dataTables_scrollBody table');
             tableHead.style.width = tableBody.offsetWidth + 'px';
         }
-
+    
         window.addEventListener('resize', alignTableHeadAndBody);
         alignTableHeadAndBody();
     </script>
-
+    
+    
     {% endblock %}
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
