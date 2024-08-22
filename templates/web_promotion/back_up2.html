@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th" dir="ltr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +29,10 @@
         }
         th {
             background-color: #ffffff;
+            min-width: 100px;  
+        }
+        td {
+            min-width: 100px; 
         }
         .non-editable {
             background-color: #e9ecef;
@@ -64,7 +68,6 @@
         .table th, .table td {
             text-align: left;
         }
-        /* ปรับความสูงของ select2 */
         .select2-container .select2-selection--single {
             height: 38px;
         }
@@ -79,316 +82,669 @@
 </head>
 <body>
     {% extends "web_promotion/base.html" %}
-    {% block title %}Set Premium{% endblock %}
+    {% block title %}Promotion Price Set{% endblock %}
     {% block content %}
     <div class="container-fluid px-4">
-        <h1 class="mt-4">Set Premium</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Set Premium</li>
-        </ol>
-        <button class="btn btn-success mb-3" id="insertRowButton">Insert</button>
+        <h1 class="mt-4">Promotion Price Set</h1>
         <div class="table-wrapper">
-            <table id="example" class="display nowrap" style="width:100%">
+            <table id="priceSetTable" class="display">
                 <thead>
                     <tr>
-                        <th></th>
                         <th>ID</th>
-                        <th>ราคาขอบล่าง</th>
-                        <th>ราคาขอบบน</th>
-                        <th>ก๊อก 2 Set 1</th>
-                        <th>ก๊อก 2 Set 2</th>
-                        <th>ก๊อก 2 Set 3</th>
-                        <th>%ผ่อน</th>
-                        <th>เดือนผ่อน</th>
-                        <th>ประกันจอ</th>
-                        <th>Type</th>
-                        <th>AVG.P</th>
-                        <th>มูลค่า Voucher</th>
-                        <th></th>
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th><select id="status-filter"><option value="">All</option></select></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th>Show</th>
+                        <th>Update</th>
+                        <th>Timestamp</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Location</th>
+                        <th>Brand</th>
+                        <th>Full Description</th>
+                        <th>Note</th>
+                        <th>Status</th>
+                        <th>Stock</th>
+                        <th>Price RRP</th>
+                        <th>Net Selling Price</th>
+                        <th>Cost</th>
+                        <th>MG</th>
+                        <th>BigC Support</th>
+                        <th>Brand Support</th>
+                        <th>TG Support</th>
+                        <th>Total Disc</th>
+                        <th>MG Remaining</th>
+                        <th>TG Support Promotion</th>
+                        <th>Note PM</th>
+                        <th>Discount Code</th>
+                        <th>Discount Note</th>
+                        <th>Warranty 2 Years</th>
+                        <th>Broken Screen</th>
+                        <th>Level Free Gift</th>
+                        <th>Cost Premium</th>
+                        <th>Option Set 1</th>
+                        <th>Option Set 2</th>
+                        <th>Option Set 3</th>
+                        <th>Type Shop</th>
+                        <th>TG Free Gift</th>
+                        <th>All Brand Free Gift</th>
+                        <th>Cost BigC</th>
+                        <th>Selling Price</th>
+                        <th>Cost Ex VAT Extra</th>
+                        <th>Profit Live Sales</th>
+                        <th>RM Live</th>
+                        <th>Cost Ins Percent</th>
+                        <th>Cost Ins Bath</th>
+                        <th>Cost Ex VAT Cost Ins</th>
+                        <th>RM Cost</th>
+                        <th>Analyze Ins</th>
+                        <th>%</th>
+                        <th>KBK</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>KGB</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>TTB</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>BBL</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>UOBC</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>SCB</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>KTC</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>GSB</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>AEON Plan</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>AEON Pay</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>FCC</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>KTC Pround</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>UOB Cash Plus</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>SCB Peedy</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>TTB Flash</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>KTX Ex</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>Pay Next Extra</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>SCBM</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>SCBM RAM</th>
+                        <th>Code</th>
+                        
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in data %}
-                        <tr>
-                            <td>
-                                <button class="btn btn-primary btn-sm" onclick='editRow(this)'>Edit</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">Delete</button>
-                            </td>
-                            <td>{{ row.id }}</td>
-                            <td>{{ row.lowest_price }}</td>
-                            <td>{{ row.highest_price }}</td>
-                            <td>{{ row.optionset1 }}</td>
-                            <td>{{ row.optionset2 }}</td>
-                            <td>{{ row.optionset3 }}</td>
-                            <td>{{ row.cost_installment }}</td>
-                            <td>{{ row.month }}</td>
-                            <td>{{ row.warranty }}</td>
-                            <td>{{ row.type }}</td>
-                            <td>{{ row.avg_p }}</td>
-                            <td>{{ row.voucher_value }}</td>
-                            <td>{{ row.percent }}</td>
-                        </tr>
-                    {% else %}
-                        <tr id="no-data">
-                            <td colspan="14" class="text-center">ไม่มีข้อมูล</td>
-                        </tr>
+                    <tr data-id="{{ row.id }}">
+                        <td>{{ row.id }}</td>
+                        <td>
+                            <select class="form-control show-status" data-column="show_status">
+                                <option value="" {% if row.show_status == '' %}selected{% endif %}></option>
+                                <option value="True" {% if row.show_status == 'True' %}selected{% endif %}>True</option>
+                                <option value="False" {% if row.show_status == 'False' %}selected{% endif %}>False</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control update-status" data-column="update_status">
+                                <option value="" {% if row.update_status == '' %}selected{% endif %}></option>
+                                <option value="True" {% if row.update_status == 'True' %}selected{% endif %}>True</option>
+                                <option value="False" {% if row.update_status == 'False' %}selected{% endif %}>False</option>
+                            </select>
+                        </td>
+                        <td contenteditable="true" data-column="timestamp">{{ row.timestamp }}</td>
+                        <td contenteditable="true" data-column="start_date" class="date-column">{{ row.start_date }}</td>
+                        <td contenteditable="true" data-column="end_date" class="date-column">{{ row.end_date }}</td>
+                        <td contenteditable="true" data-column="location">{{ row.location }}</td>
+                        <td>
+                            <input type="text" class="form-control brand" value="{{ row.brand }}" readonly>
+                        </td>
+                        <td>
+                            <select class="form-control fulldescription" data-column="fulldescription">
+                                <option value="" {% if row.model_sku == '' %}selected{% endif %}></option>
+                                {% for cost_row in cost_data %}
+                                    <option value="{{ cost_row.model_sku }}" data-brand="{{ cost_row.brand }}" data-status="{{ cost_row.status }}" data-stock_qty="{{ cost_row.stock_qty }}"
+                                    data-price_rrp="{{ cost_row.price_rrp }}" data-cost_b="{{ cost_row.cost_b }}" data-margin="{{ cost_row.margin }}">
+                                        {{ cost_row.model_sku }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td contenteditable="true" data-column="note">{{ row.note }}</td>
+                        <td>
+                            <input type="text" class="form-control cost_status" value="{{ row.cost_status }}" readonly>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control stock" value="{{ row.stock }}" readonly>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control price_rrp" value="{{ row.price_rrp }}" readonly>
+                        </td>
+                        <td contenteditable="true" data-column="netselling_price">{{ row.netselling_price }}</td>
+                        <td>
+                            <input type="text" class="form-control cost" value="{{ row.cost }}" readonly>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control mg" value="{{ row.mg }}" readonly>
+                        </td>
+                        <td contenteditable="true" data-column="bigc_support">{{ row.bigc_support }}</td>
+                        <td contenteditable="true" data-column="brand_support">{{ row.brand_support }}</td>
+                        <td contenteditable="true" data-column="tg_support">{{ row.tg_support }}</td>
+                        <td contenteditable="true" data-column="total_disc" value="{{ row.total_disc }}" readonly>{{ row.total_disc }}</td>
+                        <td contenteditable="true" data-column="mg_remaining">{{ row.mg_remaining }}</td>
+                        <td contenteditable="true" data-column="tg_support_promotion">{{ row.tg_support_promotion }}</td>
+                        <td contenteditable="true" data-column="note_pm">{{ row.note_pm }}</td>
+                        <td contenteditable="true" data-column="discount_code">{{ row.discount_code }}</td>
+                        <td contenteditable="true" data-column="discount_note">{{ row.discount_note }}</td>
+                        <td>
+                            <select class="form-control warranty2years-select" data-column="warranty2years">
+                                <option value="" {% if row.warranty2years == '' %}selected{% endif %}></option>
+                                <option value="ประกัน 2 ปี" {% if row.warranty2years == 'ประกัน 2 ปี' %}selected{% endif %}>ประกัน 2 ปี</option>
+                                <option value="ไม่ประกัน" {% if row.warranty2years == 'ไม่ประกัน' %}selected{% endif %}>ไม่ประกัน</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control brokenscreen-select" data-column="brokenscreen">
+                                <option value="" {% if row.brokenscreen == '' %}selected{% endif %}></option>
+                                <option value="ประกัน" {% if row.brokenscreen == 'ประกัน' %}selected{% endif %}>ประกัน</option>
+                                <option value="ไม่ประกัน" {% if row.brokenscreen == 'ไม่ประกัน' %}selected{% endif %}>ไม่ประกัน</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control levelfreegift-select" data-column="levelfreegift">
+                                <option value="" {% if row.levelfreegift == '' %}selected{% endif %}></option>
+                                <option value="แถม" {% if row.levelfreegift == 'แถม' %}selected{% endif %}>แถม</option>
+                                <option value="ไม่แถม" {% if row.levelfreegift == 'ไม่แถม' %}selected{% endif %}>ไม่แถม</option>
+                            </select>
+                        </td>
+                        <td contenteditable="true" data-column="cost_premium">{{ row.cost_premium }}</td>
+                        <td contenteditable="true" data-column="optionset1">{{ row.optionset1 }}</td>
+                        <td contenteditable="true" data-column="optionset2">{{ row.optionset2 }}</td>
+                        <td contenteditable="true" data-column="optionset3">{{ row.optionset3 }}</td>
+                        <td contenteditable="true" data-column="type_shop">{{ row.type_shop }}</td>
+                        <td contenteditable="true" data-column="tgfreegift">{{ row.tgfreegift }}</td>
+                        <td contenteditable="true" data-column="allbrandfreegift">{{ row.allbrandfreegift }}</td>
+                        <td contenteditable="true" data-column="costbigC">{{ row.costbigC }}</td>
+                        <td contenteditable="true" data-column="sellingprice">{{ row.sellingprice }}</td>
+                        <td contenteditable="true" data-column="costex_vat_extra">{{ row.costex_vat_extra }}</td>
+                        <td contenteditable="true" data-column="profitLivesales">{{ row.profitLivesales }}</td>
+                        <td contenteditable="true" data-column="rm_live">{{ row.rm_live }}</td>
+                        <td contenteditable="true" data-column="cost_ins_persent">{{ row.cost_ins_persent }}</td>
+                        <td contenteditable="true" data-column="cost_ins_bath">{{ row.cost_ins_bath }}</td>
+                        <td contenteditable="true" data-column="costex_vat_cost_ins">{{ row.costex_vat_cost_ins }}</td>
+                        <td contenteditable="true" data-column="rm_cost">{{ row.rm_cost }}</td>
+                        <td contenteditable="true" data-column="analyze_ins">{{ row.analyze_ins }}</td>
+
+                        <td contenteditable="true" data-column="kbk_per">{{ row.kbk_per }}</td>
+                        <td contenteditable="true" data-column="kbk_month">{{ row.kbk_month }}</td>
+                        <td contenteditable="true" data-column="kbk_code">{{ row.kbk_code }}</td>
+
+                        <td contenteditable="true" data-column="kgb_per">{{ row.kgb_per }}</td>
+                        <td contenteditable="true" data-column="kgb_month">{{ row.kgb_month }}</td>
+                        <td contenteditable="true" data-column="kgb_code">{{ row.kgb_code }}</td>
+
+                        <td contenteditable="true" data-column="ttb_per">{{ row.ttb_per }}</td>
+                        <td contenteditable="true" data-column="ttb_month">{{ row.ttb_month }}</td>
+                        <td contenteditable="true" data-column="ttb_code">{{ row.ttb_code }}</td>
+
+                        <td contenteditable="true" data-column="bbl_per">{{ row.bbl_per }}</td>
+                        <td contenteditable="true" data-column="bbl_month">{{ row.bbl_month }}</td>
+                        <td contenteditable="true" data-column="bbl_code">{{ row.bbl_code }}</td>
+
+                        <td contenteditable="true" data-column="uobc_per">{{ row.uobc_per }}</td>
+                        <td contenteditable="true" data-column="uobc_month">{{ row.uobc_month }}</td>
+                        <td contenteditable="true" data-column="uobc_code">{{ row.uobc_code }}</td>
+
+                        <td contenteditable="true" data-column="scb_per">{{ row.scb_per }}</td>
+                        <td contenteditable="true" data-column="scb_month">{{ row.scb_month }}</td>
+                        <td contenteditable="true" data-column="scb_code">{{ row.scb_code }}</td>
+
+                        <td contenteditable="true" data-column="ktc_per">{{ row.ktc_per }}</td>
+                        <td contenteditable="true" data-column="ktc_month">{{ row.ktc_month }}</td>
+                        <td contenteditable="true" data-column="ktc_code">{{ row.ktc_code }}</td>
+
+                        <td contenteditable="true" data-column="gsb">{{ row.gsb_per }}</td>
+                        <td contenteditable="true" data-column="gsb">{{ row.gsb_month }}</td>
+                        <td contenteditable="true" data-column="gsb">{{ row.gsb_code }}</td>
+                        
+                        <td contenteditable="true" data-column="aeon_plan_per">{{ row.aeon_plan_per }}</td>
+                        <td contenteditable="true" data-column="aeon_plan_month">{{ row.aeon_plan_month }}</td>
+                        <td contenteditable="true" data-column="aeon_plan_code">{{ row.aeon_plan_code }}</td>
+
+                        <td contenteditable="true" data-column="aeon_pay_per">{{ row.aeon_pay_per }}</td>
+                        <td contenteditable="true" data-column="aeon_pay_month">{{ row.aeon_pay_month }}</td>
+                        <td contenteditable="true" data-column="aeon_pay_code">{{ row.aeon_pay_code }}</td>
+
+                        <td contenteditable="true" data-column="fcc_per">{{ row.fcc_per }}</td>
+                        <td contenteditable="true" data-column="fcc_month">{{ row.fcc_month }}</td>
+                        <td contenteditable="true" data-column="fcc_code">{{ row.fcc_code }}</td>
+
+                        <td contenteditable="true" data-column="ktc_pround_per">{{ row.ktc_pround_per }}</td>
+                        <td contenteditable="true" data-column="ktc_pround_month">{{ row.ktc_pround_month }}</td>
+                        <td contenteditable="true" data-column="ktc_pround_code">{{ row.ktc_pround_code }}</td>
+
+                        <td contenteditable="true" data-column="uob_cashplus_per">{{ row.uob_cashplus_per }}</td>
+                        <td contenteditable="true" data-column="uob_cashplus_month">{{ row.uob_cashplus_month }}</td>
+                        <td contenteditable="true" data-column="uob_cashplus_code">{{ row.uob_cashplus_code }}</td>
+
+                        <td contenteditable="true" data-column="scbpeedy_per">{{ row.scbpeedy_per }}</td>
+                        <td contenteditable="true" data-column="scbpeedy_month">{{ row.scbpeedy_month }}</td>
+                        <td contenteditable="true" data-column="scbpeedy_code">{{ row.scbpeedy_code }}</td>
+
+                        <td contenteditable="true" data-column="ttb_flash_per">{{ row.ttb_flash_per }}</td>
+                        <td contenteditable="true" data-column="ttb_flash_month">{{ row.ttb_flash_month }}</td>
+                        <td contenteditable="true" data-column="ttb_flash_code">{{ row.ttb_flash_code }}</td>
+
+                        <td contenteditable="true" data-column="ktx_ex_per">{{ row.ktx_ex_per }}</td>
+                        <td contenteditable="true" data-column="ktx_ex_month">{{ row.ktx_ex_month }}</td>
+                        <td contenteditable="true" data-column="ktx_ex_code">{{ row.ktx_ex_code }}</td>
+
+                        <td contenteditable="true" data-column="pay_nextextra_per">{{ row.pay_nextextra_per }}</td>
+                        <td contenteditable="true" data-column="pay_nextextra_month">{{ row.pay_nextextra_month }}</td>
+                        <td contenteditable="true" data-column="pay_nextextra_code">{{ row.pay_nextextra_code }}</td>
+
+                        <td contenteditable="true" data-column="scbm_per">{{ row.scbm_per }}</td>
+                        <td contenteditable="true" data-column="scbm_month">{{ row.scbm_month }}</td>
+                        <td contenteditable="true" data-column="scbm_code">{{ row.scbm_code }}</td>
+
+                        <td contenteditable="true" data-column="scbm_ram_per">{{ row.scbm_ram_per }}</td>
+                        <td contenteditable="true" data-column="scbm_ram_month">{{ row.scbm_ram_month }}</td>
+                        <td contenteditable="true" data-column="scbm_ram_code">{{ row.scbm_ram_code }}</td>
+
+                        <td contenteditable="true" data-column="all_bank_per">{{ row.all_bank_per }}</td>
+                        <td contenteditable="true" data-column="all_bank_month">{{ row.all_bank_month }}</td>
+                        <td contenteditable="true" data-column="all_bank_code">{{ row.all_bank_code }}</td>
+
+                        <td><button class="deleteRow">Clear Data</button></td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        <button id="addRow">Add Row</button>
     </div>
 
     <script>
         $(document).ready(function() {
-            var table = $('#example').DataTable({
+            $('#priceSetTable').DataTable({
                 scrollX: true,
-                scrollY: '500px',
-                scrollCollapse: true,
-                paging: false,
-                info: false,
-                autoWidth: false,
-                columnDefs: [
-                    { width: '20%', targets: 5 }
-                ],
-                initComplete: function(settings, json) {
-                    alignTableHeadAndBody();
-                }
+                paging: false,  // Disable paging
+                dom: 't'  // Only show the table without other controls
             });
-
-            function populateDropdown(columnIndex, dropdownId) {
-                var uniqueData = [];
-                table.column(columnIndex).data().unique().sort().each(function(d) {
-                    uniqueData.push(d);
+        
+            $('#addRow').click(function() {
+                $.ajax({
+                    url: '/add_price_set',
+                    type: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
                 });
-
-                $.each(uniqueData, function(index, value) {
-                    $(dropdownId).append('<option value="' + value + '">' + value + '</option>');
-                });
-            }
-            populateDropdown(11, '#status-cost-filter');
-
-            $('select').select2({
-                width: '100%',
-                dropdownAutoWidth: true
             });
-
-            $('select').on('change', function() {
-                var columnIndex = $(this).parent().index();
-                var value = $.fn.dataTable.util.escapeRegex($(this).val());
-                table.column(columnIndex).search(value ? '^' + value + '$' : '', true, false).draw();
-            });
-
-            window.addEventListener('resize', alignTableHeadAndBody);
-        });
-
-        function alignTableHeadAndBody() {
-            const tableHead = document.querySelector('.dataTables_scrollHeadInner table');
-            const tableBody = document.querySelector('.dataTables_scrollBody table');
-            if (tableHead && tableBody) {
-                tableHead.style.width = tableBody.offsetWidth + 'px';
-            }
-        }
-    
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('insertRowButton').addEventListener('click', function() {
-                addEmptyRow();
-            });
-        });
-
-        function addEmptyRow() {
-            const noDataRow = document.getElementById('no-data');
-            if (noDataRow) {
-                noDataRow.remove();
-            }
-            const newRow = document.createElement('tr');
-            newRow.className = 'new-row';
-            newRow.innerHTML = `
-                <td>
-                    <button class="btn btn-success btn-sm" onclick="saveNewData(this)">Save</button>
-                    <button class="btn btn-secondary btn-sm" onclick="cancelNewRow(this)">Cancel</button>
-                </td>
-                <td></td>
-                <td><input type="text" class="form-control" name="lowest_price"></td>
-                <td><input type="text" class="form-control" name="highest_price"></td>
-                <td><input type="text" class="form-control" name="optionset1"></td>
-                <td><input type="text" class="form-control" name="optionset2"></td>
-                <td><input type="text" class="form-control" name="optionset3"></td>
-                <td><input type="text" class="form-control" name="cost_installment"></td>
-                <td><input type="text" class="form-control" name="month"></td>
-                <td><input type="text" class="form-control" name="warranty"></td>
-                <td><input type="text" class="form-control" name="type"></td>
-                <td><input type="text" class="form-control" name="avg_p"></td>
-                <td><input type="text" class="form-control" name="voucher_value"></td>
-                <td><input type="text" class="form-control" name="percent"></td>
-            `;
-            document.querySelector('#example tbody').appendChild(newRow);
-            $('select').select2({
-                width: '100%',
-                dropdownAutoWidth: true
-            });
-            alignTableHeadAndBody();
-        }
-
-        function saveNewData(button) {
-            const row = button.closest('tr');
-
-            const rowData = {
-                lowest_price: row.querySelector('input[name="lowest_price"]').value,
-                highest_price: row.querySelector('input[name="highest_price"]').value,
-                optionset1: row.querySelector('input[name="optionset1"]').value,
-                optionset2: row.querySelector('input[name="optionset2"]').value,
-                optionset3: row.querySelector('input[name="optionset3"]').value,
-                cost_installment: row.querySelector('input[name="cost_installment"]').value,
-                month: row.querySelector('input[name="month"]').value,
-                warranty: row.querySelector('input[name="warranty"]').value,
-                type: row.querySelector('input[name="type"]').value,
-                avg_p: row.querySelector('input[name="avg_p"]').value,
-                voucher_value: row.querySelector('input[name="voucher_value"]').value,
-                percent: row.querySelector('input[name="percent"]').value,
-            };
-
-            $.ajax({
-                type: 'POST',
-                url: '/web_set_premium_insert',
-                contentType: 'application/json',
-                data: JSON.stringify({ table_data: [rowData] }),
-                success: function (response) {
-                    alert(response.message);
-                    location.reload();
-                },
-                error: function (xhr, status, error) {
-                    alert('Failed to save data.');
-                }
-            });
-        }
-
-        function cancelNewRow(button) {
-            button.closest('tr').remove();
-            const tbody = document.querySelector('#example tbody');
-            if (tbody.children.length === 0) {
-                const noDataRow = document.createElement('tr');
-                noDataRow.id = 'no-data';
-                noDataRow.innerHTML = `<td colspan="14" class="text-center">ไม่มีข้อมูล</td>`;
-                tbody.appendChild(noDataRow);
-            }
-        }
-
-        function editRow(button) {
-            const row = button.closest('tr');
-            row.querySelectorAll('td').forEach((cell, index) => {
-                const content = cell.textContent.trim();
-                let name = '';
-                switch (index) {
-                    case 1: name = 'id'; break;
-                    case 2: name = 'lowest_price'; break;
-                    case 3: name = 'highest_price'; break;
-                    case 4: name = 'optionset1'; break;
-                    case 5: name = 'optionset2'; break;
-                    case 6: name = 'optionset3'; break;
-                    case 7: name = 'cost_installment'; break;
-                    case 8: name = 'month'; break;
-                    case 9: name = 'warranty'; break;
-                    case 10: name = 'type'; break;
-                    case 11: name = 'avg_p'; break;
-                    case 12: name = 'voucher_value'; break;
-                    case 13: name = 'percent'; break;
-                }
-                if (name) {
-                    if (name === 'id') {
-                        cell.innerHTML = `<input type="text" class="form-control non-editable" name="${name}" value="${content}" readonly>`;
-                    } else {
-                        cell.innerHTML = `<input type="text" class="form-control" name="${name}" value="${content}">`;
+        
+            $('td[contenteditable=true]').on('blur', function() {
+                var $row = $(this).closest('tr');
+                var id = $row.data('id');
+                var column = $(this).data('column');
+                var value = $(this).text();
+            
+                if ($(this).hasClass('date-column')) {
+                    if (value !== '') {
+                        var datePattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+                        if (!datePattern.test(value)) {
+                            alert('Please enter a date in the format dd/mm/yyyy.');
+                            $(this).text('');
+                            return;
+                        }
                     }
                 }
+            
+                if (column === 'bigc_support' || column === 'brand_support' || column === 'tg_support') {
+                    var numberPattern = /^\d*$/;
+                    if (!numberPattern.test(value)) {
+                        alert('Please enter a valid number.');
+                        $(this).text('');
+                        return;
+                    }
+                    
+                    updateTotalDisc($row);  // Update the Total Disc column when any of the related columns change
+                }
+            
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {column: column, value: value},
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
             });
-
-            button.classList.remove('btn-primary');
-            button.classList.add('btn-success');
-            button.textContent = 'Save';
-            button.setAttribute('onclick', 'saveEditedData(this)');
-            button.nextElementSibling.classList.remove('btn-danger');
-            button.nextElementSibling.classList.add('btn-secondary');
-            button.nextElementSibling.textContent = 'Cancel';
-            button.nextElementSibling.setAttribute('onclick', 'cancelEdit(this)');
-            $('select').select2({
-                width: '100%',
-                dropdownAutoWidth: true
+        
+            $('#priceSetTable').on('change', '.fulldescription', function() {
+                var $row = $(this).closest('tr');
+                var id = $row.data('id');
+                var model_sku = $(this).val();
+                var brand = $(this).find('option:selected').data('brand');
+                var status = $(this).find('option:selected').data('status');
+                var stock_qty = $(this).find('option:selected').data('stock_qty');
+                var price_rrp = $(this).find('option:selected').data('price_rrp');
+                var cost_b = $(this).find('option:selected').data('cost_b');
+                var margin = $(this).find('option:selected').data('margin');
+                
+                $row.find('.brand').val(brand);
+                $row.find('.cost_status').val(status);
+                $row.find('.stock').val(stock_qty);
+                $row.find('.price_rrp').val(price_rrp);
+                $row.find('.cost').val(cost_b);
+                $row.find('.mg').val(margin);
+                
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'fulldescription',
+                        value: model_sku
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+                
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'brand',
+                        value: brand
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+                
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'cost_status',
+                        value: cost_status
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+            
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'stock',
+                        value: stock
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+        
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'price_rrp',
+                        value: price_rrp
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+        
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'cost',
+                        value: cost
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+        
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'mg',
+                        value: mg
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
             });
-            alignTableHeadAndBody();
-        }
-
-        function saveEditedData(button) {
-            const row = button.closest('tr');
-            const startValue = row.querySelector('input[name="lowest_price"]').value;
-
-            if (!startValue) {
-                alert('กรุณาใส่ราคาขอบล่าง');
-                return;
-            }
-
-            const rowData = {
-                id: row.querySelector('input[name="id"]').value,
-                lowest_price: row.querySelector('input[name="lowest_price"]').value,
-                highest_price: row.querySelector('input[name="highest_price"]').value,
-                optionset1: row.querySelector('input[name="optionset1"]').value,
-                optionset2: row.querySelector('input[name="optionset2"]').value,
-                optionset3: row.querySelector('input[name="optionset3"]').value,
-                cost_installment: row.querySelector('input[name="cost_installment"]').value,
-                month: row.querySelector('input[name="month"]').value,
-                warranty: row.querySelector('input[name="warranty"]').value,
-                type: row.querySelector('input[name="type"]').value,
-                avg_p: row.querySelector('input[name="avg_p"]').value,
-                voucher_value: row.querySelector('input[name="voucher_value"]').value,
-                percent: row.querySelector('input[name="percent"]').value,
-            };
-
-            $.ajax({
-                type: 'POST',
-                url: '/web_set_premium_update',
-                contentType: 'application/json',
-                data: JSON.stringify({ table_data: [rowData] }),
-                success: function (response) {
-                    alert(response.message);
-                    location.reload();
-                },
-                error: function (xhr, status, error) {
-                    alert('Failed to save data.');
+        
+            $('#priceSetTable').on('change', '.show-status, .update-status', function() {
+                var $row = $(this).closest('tr');
+                var id = $row.data('id');
+                var showStatus = $row.find('.show-status').val();
+                var updateStatus = $row.find('.update-status').val();
+        
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'show_status',
+                        value: showStatus
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+        
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: {
+                        column: 'update_status',
+                        value: updateStatus
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+        
+            $('.deleteRow').click(function() {
+                var id = $(this).closest('tr').data('id');
+                if (confirm('Are you sure you want to delete this row?')) {
+                    $.ajax({
+                        url: '/delete_price_set/' + id,
+                        type: 'POST',
+                        success: function(response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                alert(response.message);
+                            }
+                        }
+                    });
                 }
             });
-        }
 
-        function cancelEdit(button) {
-            location.reload();
-        }
-
-        function deleteRow(id) {
-            if (confirm('คุณแน่ใจหรือว่าต้องการลบแถวนี้?')) {
-                $.post('/web_set_premium_delete', { id: id }, function(response) {
-                    alert(response.message);
-                    location.reload();
+            // Update Total Disc when user is typing in editable columns
+            $('#priceSetTable').on('input', 'td[contenteditable="true"]', function() {
+                var $row = $(this).closest('tr');
+                var column = $(this).data('column');
+            
+                console.log("Column: " + column );
+                // Call the update function only for these columns
+                if (column === 'bigc_support' || column === 'brand_support' || column === 'tg_support') {
+                    updateTotalDisc($row);  // Update Total Disc
+                    console.log("เข้าเงื่อนไข xxx " );
+                }
+            });
+            
+            
+            function updateTotalDisc($row) {
+                // Get the values from the related columns
+                const bigcSupport = parseFloat($row.find('td[data-column="bigc_support"]').html()) || 0;
+                const brandSupport = parseFloat($row.find('td[data-column="brand_support"]').html()) || 0;
+                const tgSupport = parseFloat($row.find('td[data-column="tg_support"]').html()) || 0;
+            
+                // Calculate total discount
+                const sum = bigcSupport + brandSupport + tgSupport;
+            
+                // Update the Total Disc column in the row
+                $row.find('td[data-column="total_disc"]').text(sum.toFixed(2));
+            
+                // Update the server with the new value
+                var id = $row.data('id');
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: { column: 'total_disc', value: sum.toFixed(2) },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
                 });
             }
-        }
+            
+            // Add event listeners to input fields to trigger the updateTotalDisc function
+            $('#priceSetTable').on('input', 'td[contenteditable="true"]', function() {
+                var $row = $(this).closest('tr');
+                var column = $(this).data('column');
+            
+                // Only call updateTotalDisc when the relevant columns change
+                if (column === 'bigc_support' || column === 'brand_support' || column === 'tg_support') {
+                    updateTotalDisc($row);
+                }
+            });
+
+            // Event listener for the warranty2years dropdown change
+            $('#priceSetTable').on('change', '.warranty2years-select', function() {
+                var $row = $(this).closest('tr'); // Find the closest row
+                var id = $row.data('id'); // Get the row ID
+                var value = $(this).val(); // Get the selected value
+            
+                // Send the selected value to the server via AJAX
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: { column: 'warranty2years', value: value },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+            
+            // Event listener for the brokenscreen dropdown change
+            $('#priceSetTable').on('change', '.brokenscreen-select', function() {
+                var $row = $(this).closest('tr'); // Find the closest row
+                var id = $row.data('id'); // Get the row ID
+                var value = $(this).val(); // Get the selected value
+            
+                // Send the selected value to the server via AJAX
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: { column: 'brokenscreen', value: value },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+
+            // Event listener for the levelfreegift dropdown change
+            $('#priceSetTable').on('change', '.levelfreegift-select', function() {
+                var $row = $(this).closest('tr'); // Find the closest row
+                var id = $row.data('id'); // Get the row ID
+                var value = $(this).val(); // Get the selected value
+            
+                // Send the selected value to the server via AJAX
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: { column: 'levelfreegift', value: value },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+            
+        });        
     </script>
-    
-    
     {% endblock %}
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

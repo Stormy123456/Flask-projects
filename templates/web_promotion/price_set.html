@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Set Premium</title>
+    <title>Price Set</title>
     <!-- Include DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <!-- Include jQuery -->
@@ -29,6 +29,10 @@
         }
         th {
             background-color: #ffffff;
+            min-width: 100px;  
+        }
+        td {
+            min-width: 100px; 
         }
         .non-editable {
             background-color: #e9ecef;
@@ -74,6 +78,44 @@
         .table td input, .table td select {
             width: 100%;
         }
+        
+        #lastMonthModal {
+            display: none;
+            position: fixed;
+            z-index: 1050; /* ค่า z-index สูงเพื่อให้แสดงอยู่บนสุด */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5); /* ความโปร่งใสของพื้นหลัง */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%; /* ใช้ 90% ของหน้าจอเพื่อความ responsive */
+            max-width: 90%; /* ขนาดสูงสุดของ modal */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        /* ปรับปรุงปุ่มให้มีระยะห่างและอยู่ในแนวนอน */
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* Responsive media query */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%; /* ใช้ขนาดกว้างขึ้นสำหรับหน้าจอที่เล็ก */
+                margin: 10% auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -82,79 +124,186 @@
     {% block content %}
     <div class="container-fluid px-4">
         <h1 class="mt-4">Promotion Price Set</h1>
+        <button id="fetchLastMonthData" style="position: absolute; right: 20px; top: 20px;">ดึงข้อมูลย้อนหลัง</button>
+        <div id="lastMonthModal" class="modal">
+            <div class="modal-content">
+                <h2>ข้อมูลเดือนก่อน</h2>
+                <table id="lastMonthTable" class="display">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>ID</th>
+                            <th>Show Status</th>
+                            <th>Update Status</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Location</th>
+                            <th>Brand</th>
+                            <th>Fulldescription</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div class="modal-buttons">
+                    <button id="confirmUpdate" class="btn btn-primary">ตกลง</button>
+                    <button id="closeModal" class="btn btn-secondary">ปิด</button>
+                </div>
+            </div>
+        </div>        
         <div class="table-wrapper">
             <table id="priceSetTable" class="display">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Show</th>
-                        <th>Update</th>
-                        <th>Timestamp</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Location</th>
-                        <th>Brand</th>
-                        <th>Full Description</th>
-                        <th>Note</th>
-                        <th>Status</th>
-                        <th>Stock</th>
-                        <th>Price RRP</th>
-                        <th>Net Selling Price</th>
-                        <th>Cost</th>
-                        <th>MG</th>
-                        <th>BigC Support</th>
-                        <th>Brand Support</th>
-                        <th>TG Support</th>
-                        <th>Total Disc</th>
-                        <th>MG Remaining</th>
-                        <th>TG Support Promotion</th>
-                        <th>Note PM</th>
-                        <th>Discount Code</th>
-                        <th>Discount Note</th>
-                        <th>Warranty 2 Years</th>
-                        <th>Broken Screen</th>
-                        <th>Level Free Gift</th>
-                        <th>Cost Premium</th>
-                        <th>Option Set 1</th>
-                        <th>Option Set 2</th>
-                        <th>Option Set 3</th>
-                        <th>Type Shop</th>
-                        <th>TG Free Gift</th>
-                        <th>All Brand Free Gift</th>
-                        <th>Cost BigC</th>
-                        <th>Selling Price</th>
-                        <th>Cost Ex VAT Extra</th>
-                        <th>Profit Live Sales</th>
-                        <th>RM Live</th>
-                        <th>Cost Ins Percent</th>
-                        <th>Cost Ins Bath</th>
-                        <th>Cost Ex VAT Cost Ins</th>
-                        <th>RM Cost</th>
-                        <th>Analyze Ins</th>
-                        <th>KBK</th>
-                        <th>KGB</th>
-                        <th>TTB</th>
-                        <th>BBL</th>
-                        <th>UOBC</th>
-                        <th>SCB</th>
-                        <th>KTC</th>
-                        <th>GSB</th>
-                        <th>AEON Plan</th>
-                        <th>AEON Pay</th>
-                        <th>FCC</th>
-                        <th>KTC Pround</th>
-                        <th>UOB Cash Plus</th>
-                        <th>SCB Peedy</th>
-                        <th>TTB Flash</th>
-                        <th>KTX Ex</th>
-                        <th>Pay Next Extra</th>
-                        <th>SCBM</th>
-                        <th>SCBM RAM</th>
-                        <th>All Bank</th>
-                        <th>Samsung Dis</th>
-                        <th>Calculate DP Ex VAT</th>
-                        <th>Model</th>
-                        <th>Action</th>
+                        <th rowspan="2">ID</th>
+                        <th rowspan="2">Show</th>
+                        <th rowspan="2">Update</th>
+                        <th rowspan="2">Timestamp</th>
+                        <th rowspan="2">Start</th>
+                        <th rowspan="2">End</th>
+                        <th rowspan="2">Location</th>
+                        <th rowspan="2">Brand</th>
+                        <th rowspan="2">Full Description</th>
+                        <th rowspan="2">Note</th>
+                        <th rowspan="2">Status</th>
+                        <th rowspan="2">Stock</th>
+                        <th rowspan="2">Price RRP</th>
+                        <th rowspan="2">Net Selling Price</th>
+                        <th rowspan="2">Cost</th>
+                        <th rowspan="2">MG</th>
+                        <th rowspan="2">BigC Support</th>
+                        <th rowspan="2">Brand Support</th>
+                        <th rowspan="2">TG Support</th>
+                        <th rowspan="2">Total Disc</th>
+                        <th rowspan="2">MG Remaining</th>
+                        <th rowspan="2">TG Support Promotion</th>
+                        <th rowspan="2">Note PM</th>
+                        <th rowspan="2">Discount Code</th>
+                        <th rowspan="2">Discount Note</th>
+                        <th rowspan="2">Warranty 2 Years</th>
+                        <th rowspan="2">Broken Screen</th>
+                        <th rowspan="2">Level Free Gift</th>
+                        <th rowspan="2">Cost Premium</th>
+                        <th rowspan="2">Option Set 1</th>
+                        <th rowspan="2">Option Set 2</th>
+                        <th rowspan="2">Option Set 3</th>
+                        <th rowspan="2">Type Shop</th>
+                        <th rowspan="2">TG Free Gift</th>
+                        <th rowspan="2">All Brand Free Gift</th>
+                        <th rowspan="2">Cost BigC</th>
+                        <th rowspan="2">Selling Price</th>
+                        <th rowspan="2">Cost Ex VAT Extra</th>
+                        <th rowspan="2">Profit Live Sales</th>
+                        <th rowspan="2">RM Live</th>
+                        <th rowspan="2">Remain Margin</th>
+                        <th rowspan="2">Cost Ins Percent</th>
+                        <th rowspan="2">Cost Ins Bath</th>
+                        <th rowspan="2">Cost Ex VAT Cost Ins</th>
+                        <th rowspan="2">RM Cost</th>
+                        <th rowspan="2">Analyze Ins</th>
+                        <th colspan="3" class="text-center">KBK กสิกร</th>
+                        <th colspan="3" class="text-center">KGC กรุงศรี</th>
+                        <th colspan="3" class="text-center">TTB ทหารไทยธนชาต</th>
+                        <th colspan="3" class="text-center">BBL กรุงเทพ</th>
+                        <th colspan="3" class="text-center">UOB ยูโอบี/CITI ซิตี้แบงค์</th>
+                        <th colspan="3" class="text-center">SCB ไทยพาณิชย์</th>
+                        <th colspan="3" class="text-center">KTC กรุงไทย</th>
+                        <th colspan="3" class="text-center">GSB ออมสิน</th>
+                        <th colspan="3" class="text-center">AEON Happy Plan</th>
+                        <th colspan="3" class="text-center">AEON Happy Pay</th>
+                        <th colspan="3" class="text-center">FCC เฟิสช้อย</th>
+                        <th colspan="3" class="text-center">KTC PROUD</th>
+                        <th colspan="3" class="text-center">UOB Cash Plus</th>
+                        <th colspan="3" class="text-center">SCBSPEEDY</th>
+                        <th colspan="3" class="text-center">ธนชาต Flash Plus</th>
+                        <th colspan="3" class="text-center">กสิกร Xpress Cash</th>
+                        <th colspan="3" class="text-center">Pay Next Extra</th>
+                        <th colspan="3" class="text-center">SCB M (พารากอน/บางแค/งามวงศ์/เอ็มโพ/บางกะปิ/ท่าพระ/โคราช)</th>
+                        <th colspan="3" class="text-center">SCB M (สาขารามคำแหง)</th>
+                        <th colspan="3" class="text-center">SCB /UOB/CITI/KBK/KCC/KTC (สาขารามคำแหง)</th>
+                        <th rowspan="2">Action</th>
+                    
+                    </tr>
+                    <tr>
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
+
+                        <th>%</th>
+                        <th>เดือน</th>
+                        <th>Code</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -186,7 +335,10 @@
                             <select class="form-control fulldescription" data-column="fulldescription">
                                 <option value="" {% if row.model_sku == '' %}selected{% endif %}></option>
                                 {% for cost_row in cost_data %}
-                                    <option value="{{ cost_row.model_sku }}" data-brand="{{ cost_row.brand }}" {% if row.fulldescription == cost_row.model_sku %}selected{% endif %}>{{ cost_row.model_sku }}</option>
+                                    <option value="{{ cost_row.model_sku }}" data-brand="{{ cost_row.brand }}" data-status="{{ cost_row.status }}" data-stock_qty="{{ cost_row.stock_qty }}"
+                                    data-price_rrp="{{ cost_row.price_rrp }}" data-cost_b="{{ cost_row.cost_b }}" data-margin="{{ cost_row.margin }}">
+                                        {{ cost_row.model_sku }}
+                                    </option>
                                 {% endfor %}
                             </select>
                         </td>
@@ -210,7 +362,7 @@
                         <td contenteditable="true" data-column="bigc_support">{{ row.bigc_support }}</td>
                         <td contenteditable="true" data-column="brand_support">{{ row.brand_support }}</td>
                         <td contenteditable="true" data-column="tg_support">{{ row.tg_support }}</td>
-                        <td contenteditable="true" data-column="total_disc" value="{{ row.total_disc }}" readonly>{{ row.total_disc }}</td>
+                        <td contenteditable="false" data-column="total_disc" value="{{ row.total_disc }}" readonly>{{ row.total_disc }}</td>
                         <td contenteditable="true" data-column="mg_remaining">{{ row.mg_remaining }}</td>
                         <td contenteditable="true" data-column="tg_support_promotion">{{ row.tg_support_promotion }}</td>
                         <td contenteditable="true" data-column="note_pm">{{ row.note_pm }}</td>
@@ -226,21 +378,26 @@
                         <td>
                             <select class="form-control brokenscreen-select" data-column="brokenscreen">
                                 <option value="" {% if row.brokenscreen == '' %}selected{% endif %}></option>
-                                <option value="ประกัน 2 ปี" {% if row.brokenscreen == 'ประกัน 2 ปี' %}selected{% endif %}>ประกัน 2 ปี</option>
+                                <option value="ประกัน" {% if row.brokenscreen == 'ประกัน' %}selected{% endif %}>ประกัน</option>
                                 <option value="ไม่ประกัน" {% if row.brokenscreen == 'ไม่ประกัน' %}selected{% endif %}>ไม่ประกัน</option>
                             </select>
                         </td>
-                        <td contenteditable="true" data-column="brokenscreen">{{ row.brokenscreen }}</td>
-                        <td contenteditable="true" data-column="levelfreegift">{{ row.levelfreegift }}</td>
-                        <td contenteditable="true" data-column="cost_premium">{{ row.cost_premium }}</td>
-                        <td contenteditable="true" data-column="optionset1">{{ row.optionset1 }}</td>
-                        <td contenteditable="true" data-column="optionset2">{{ row.optionset2 }}</td>
-                        <td contenteditable="true" data-column="optionset3">{{ row.optionset3 }}</td>
-                        <td contenteditable="true" data-column="type_shop">{{ row.type_shop }}</td>
+                        <td>
+                            <select class="form-control levelfreegift-select" data-column="levelfreegift">
+                                <option value="" {% if row.levelfreegift == '' %}selected{% endif %}></option>
+                                <option value="แถม" {% if row.levelfreegift == 'แถม' %}selected{% endif %}>แถม</option>
+                                <option value="ไม่แถม" {% if row.levelfreegift == 'ไม่แถม' %}selected{% endif %}>ไม่แถม</option>
+                            </select>
+                        </td>
+                        <td contenteditable="false" data-column="cost_premium">{{ row.cost_premium }}</td>
+                        <td contenteditable="false" data-column="optionset1">{{ row.optionset1 }}</td>
+                        <td contenteditable="false" data-column="optionset2">{{ row.optionset2 }}</td>
+                        <td contenteditable="false" data-column="optionset3">{{ row.optionset3 }}</td>
+                        <td contenteditable="false" data-column="type_shop">{{ row.type_shop }}</td>
                         <td contenteditable="true" data-column="tgfreegift">{{ row.tgfreegift }}</td>
                         <td contenteditable="true" data-column="allbrandfreegift">{{ row.allbrandfreegift }}</td>
-                        <td contenteditable="true" data-column="costbigC">{{ row.costbigC }}</td>
-                        <td contenteditable="true" data-column="sellingprice">{{ row.sellingprice }}</td>
+                        <td contenteditable="false" data-column="costbigc" value="{{ row.costbigc }}" readonly>{{ row.costbigc }}</td>
+                        <td contenteditable="false" data-column="sellingprice" value="{{ row.sellingprice }}" readonly>{{ row.sellingprice }}</td>
                         <td contenteditable="true" data-column="costex_vat_extra">{{ row.costex_vat_extra }}</td>
                         <td contenteditable="true" data-column="profitLivesales">{{ row.profitLivesales }}</td>
                         <td contenteditable="true" data-column="rm_live">{{ row.rm_live }}</td>
@@ -248,30 +405,89 @@
                         <td contenteditable="true" data-column="cost_ins_bath">{{ row.cost_ins_bath }}</td>
                         <td contenteditable="true" data-column="costex_vat_cost_ins">{{ row.costex_vat_cost_ins }}</td>
                         <td contenteditable="true" data-column="rm_cost">{{ row.rm_cost }}</td>
+                        <td contenteditable="true" data-column="rm_margin">{{ row.rm_margin }}</td>
                         <td contenteditable="true" data-column="analyze_ins">{{ row.analyze_ins }}</td>
-                        <td contenteditable="true" data-column="kbk">{{ row.kbk }}</td>
-                        <td contenteditable="true" data-column="kgb">{{ row.kgb }}</td>
-                        <td contenteditable="true" data-column="ttb">{{ row.ttb }}</td>
-                        <td contenteditable="true" data-column="bbl">{{ row.bbl }}</td>
-                        <td contenteditable="true" data-column="uobc">{{ row.uobc }}</td>
-                        <td contenteditable="true" data-column="scb">{{ row.scb }}</td>
-                        <td contenteditable="true" data-column="ktc">{{ row.ktc }}</td>
-                        <td contenteditable="true" data-column="gsb">{{ row.gsb }}</td>
-                        <td contenteditable="true" data-column="aeon_plan">{{ row.aeon_plan }}</td>
-                        <td contenteditable="true" data-column="aeon_pay">{{ row.aeon_pay }}</td>
-                        <td contenteditable="true" data-column="fcc">{{ row.fcc }}</td>
-                        <td contenteditable="true" data-column="ktc_pround">{{ row.ktc_pround }}</td>
-                        <td contenteditable="true" data-column="uob_cashplus">{{ row.uob_cashplus }}</td>
-                        <td contenteditable="true" data-column="scbpeedy">{{ row.scbpeedy }}</td>
-                        <td contenteditable="true" data-column="ttb_flash">{{ row.ttb_flash }}</td>
-                        <td contenteditable="true" data-column="ktx_ex">{{ row.ktx_ex }}</td>
-                        <td contenteditable="true" data-column="pay_nextextra">{{ row.pay_nextextra }}</td>
-                        <td contenteditable="true" data-column="scbm">{{ row.scbm }}</td>
-                        <td contenteditable="true" data-column="scbm_ram">{{ row.scbm_ram }}</td>
-                        <td contenteditable="true" data-column="all_bank">{{ row.all_bank }}</td>
-                        <td contenteditable="true" data-column="samsung_dis">{{ row.samsung_dis }}</td>
-                        <td contenteditable="true" data-column="calculate_dp_ex_vat">{{ row.calculate_dp_ex_vat }}</td>
-                        <td contenteditable="true" data-column="model">{{ row.model }}</td>
+
+                        <td contenteditable="true" data-column="kbk_per">{{ row.kbk_per }}</td>
+                        <td contenteditable="true" data-column="kbk_month">{{ row.kbk_month }}</td>
+                        <td contenteditable="true" data-column="kbk_code">{{ row.kbk_code }}</td>
+
+                        <td contenteditable="true" data-column="kgb_per">{{ row.kgb_per }}</td>
+                        <td contenteditable="true" data-column="kgb_month">{{ row.kgb_month }}</td>
+                        <td contenteditable="true" data-column="kgb_code">{{ row.kgb_code }}</td>
+
+                        <td contenteditable="true" data-column="ttb_per">{{ row.ttb_per }}</td>
+                        <td contenteditable="true" data-column="ttb_month">{{ row.ttb_month }}</td>
+                        <td contenteditable="true" data-column="ttb_code">{{ row.ttb_code }}</td>
+
+                        <td contenteditable="true" data-column="bbl_per">{{ row.bbl_per }}</td>
+                        <td contenteditable="true" data-column="bbl_month">{{ row.bbl_month }}</td>
+                        <td contenteditable="true" data-column="bbl_code">{{ row.bbl_code }}</td>
+
+                        <td contenteditable="true" data-column="uobc_per">{{ row.uobc_per }}</td>
+                        <td contenteditable="true" data-column="uobc_month">{{ row.uobc_month }}</td>
+                        <td contenteditable="true" data-column="uobc_code">{{ row.uobc_code }}</td>
+
+                        <td contenteditable="true" data-column="scb_per">{{ row.scb_per }}</td>
+                        <td contenteditable="true" data-column="scb_month">{{ row.scb_month }}</td>
+                        <td contenteditable="true" data-column="scb_code">{{ row.scb_code }}</td>
+
+                        <td contenteditable="true" data-column="ktc_per">{{ row.ktc_per }}</td>
+                        <td contenteditable="true" data-column="ktc_month">{{ row.ktc_month }}</td>
+                        <td contenteditable="true" data-column="ktc_code">{{ row.ktc_code }}</td>
+
+                        <td contenteditable="true" data-column="gsb">{{ row.gsb_per }}</td>
+                        <td contenteditable="true" data-column="gsb">{{ row.gsb_month }}</td>
+                        <td contenteditable="true" data-column="gsb">{{ row.gsb_code }}</td>
+                        
+                        <td contenteditable="true" data-column="aeon_plan_per">{{ row.aeon_plan_per }}</td>
+                        <td contenteditable="true" data-column="aeon_plan_month">{{ row.aeon_plan_month }}</td>
+                        <td contenteditable="true" data-column="aeon_plan_code">{{ row.aeon_plan_code }}</td>
+
+                        <td contenteditable="true" data-column="aeon_pay_per">{{ row.aeon_pay_per }}</td>
+                        <td contenteditable="true" data-column="aeon_pay_month">{{ row.aeon_pay_month }}</td>
+                        <td contenteditable="true" data-column="aeon_pay_code">{{ row.aeon_pay_code }}</td>
+
+                        <td contenteditable="true" data-column="fcc_per">{{ row.fcc_per }}</td>
+                        <td contenteditable="true" data-column="fcc_month">{{ row.fcc_month }}</td>
+                        <td contenteditable="true" data-column="fcc_code">{{ row.fcc_code }}</td>
+
+                        <td contenteditable="true" data-column="ktc_pround_per">{{ row.ktc_pround_per }}</td>
+                        <td contenteditable="true" data-column="ktc_pround_month">{{ row.ktc_pround_month }}</td>
+                        <td contenteditable="true" data-column="ktc_pround_code">{{ row.ktc_pround_code }}</td>
+
+                        <td contenteditable="true" data-column="uob_cashplus_per">{{ row.uob_cashplus_per }}</td>
+                        <td contenteditable="true" data-column="uob_cashplus_month">{{ row.uob_cashplus_month }}</td>
+                        <td contenteditable="true" data-column="uob_cashplus_code">{{ row.uob_cashplus_code }}</td>
+
+                        <td contenteditable="true" data-column="scbpeedy_per">{{ row.scbpeedy_per }}</td>
+                        <td contenteditable="true" data-column="scbpeedy_month">{{ row.scbpeedy_month }}</td>
+                        <td contenteditable="true" data-column="scbpeedy_code">{{ row.scbpeedy_code }}</td>
+
+                        <td contenteditable="true" data-column="ttb_flash_per">{{ row.ttb_flash_per }}</td>
+                        <td contenteditable="true" data-column="ttb_flash_month">{{ row.ttb_flash_month }}</td>
+                        <td contenteditable="true" data-column="ttb_flash_code">{{ row.ttb_flash_code }}</td>
+
+                        <td contenteditable="true" data-column="ktx_ex_per">{{ row.ktx_ex_per }}</td>
+                        <td contenteditable="true" data-column="ktx_ex_month">{{ row.ktx_ex_month }}</td>
+                        <td contenteditable="true" data-column="ktx_ex_code">{{ row.ktx_ex_code }}</td>
+
+                        <td contenteditable="true" data-column="pay_nextextra_per">{{ row.pay_nextextra_per }}</td>
+                        <td contenteditable="true" data-column="pay_nextextra_month">{{ row.pay_nextextra_month }}</td>
+                        <td contenteditable="true" data-column="pay_nextextra_code">{{ row.pay_nextextra_code }}</td>
+
+                        <td contenteditable="true" data-column="scbm_per">{{ row.scbm_per }}</td>
+                        <td contenteditable="true" data-column="scbm_month">{{ row.scbm_month }}</td>
+                        <td contenteditable="true" data-column="scbm_code">{{ row.scbm_code }}</td>
+
+                        <td contenteditable="true" data-column="scbm_ram_per">{{ row.scbm_ram_per }}</td>
+                        <td contenteditable="true" data-column="scbm_ram_month">{{ row.scbm_ram_month }}</td>
+                        <td contenteditable="true" data-column="scbm_ram_code">{{ row.scbm_ram_code }}</td>
+
+                        <td contenteditable="true" data-column="all_bank_per">{{ row.all_bank_per }}</td>
+                        <td contenteditable="true" data-column="all_bank_month">{{ row.all_bank_month }}</td>
+                        <td contenteditable="true" data-column="all_bank_code">{{ row.all_bank_code }}</td>
+
                         <td><button class="deleteRow">Clear Data</button></td>
                     </tr>
                     {% endfor %}
@@ -321,13 +537,6 @@
                 }
             
                 if (column === 'bigc_support' || column === 'brand_support' || column === 'tg_support') {
-                    var numberPattern = /^\d*$/;
-                    if (!numberPattern.test(value)) {
-                        alert('Please enter a valid number.');
-                        $(this).text('');
-                        return;
-                    }
-                    
                     updateTotalDisc($row);  // Update the Total Disc column when any of the related columns change
                 }
             
@@ -342,50 +551,286 @@
                     }
                 });
             });
-        
+            var set_premium_data = {{ set_premium_data | tojson }};
+            $('#priceSetTable').on('blur', 'td[contenteditable="true"][data-column="location"]', function() {
+                // ฟังก์ชันที่ต้องการทำเมื่อ fulldescription หรือ location มีการเปลี่ยนแปลง
+                var $row = $(this).closest('tr'); // หาค่า row ที่เปลี่ยนแปลง
+                var id = $row.data('id');
+                var fulldescription = $row.find('.fulldescription').val();
+                var location = $(this).text(); 
+                var price_rrp = $row.find('.price_rrp').val();
+                
+                if (!isNaN(price_rrp)) {
+                    var cost_premium = 0;
+                    var optionset1 = '';
+                    var optionset2 = '';
+                    var optionset3 = '';
+                    var type_shop = '';
+                    
+                    set_premium_data.forEach(function(item) {
+                        var lowest_price = parseFloat(item.lowest_price);
+                        var highest_price = parseFloat(item.highest_price);
+                        
+                        if ((price_rrp >= lowest_price && price_rrp <= highest_price) && location === item.type) {
+                            cost_premium = parseFloat(item.cost_installment);
+                            optionset1 = item.optionset1
+                            optionset2 = item.optionset2
+                            optionset3 = item.optionset3
+                            type_shop = item.type
+                            console.log('เข้าเงื่อนไข ');
+                        }
+                    });
+            
+                    // อัพเดตคอลัมน์ cost_premium ในแถว
+                    $row.find('td[data-column="cost_premium"]').text(cost_premium.toFixed(2));
+                    $row.find('td[data-column="optionset1"]').text(optionset1);
+                    $row.find('td[data-column="optionset2"]').text(optionset2);
+                    $row.find('td[data-column="optionset3"]').text(optionset3);
+                    $row.find('td[data-column="type_shop"]').text(type_shop);
+            
+                    var id = $row.data('id');
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'cost_premium', value: cost_premium.toFixed(2) },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'optionset1', value: optionset1 },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'optionset2', value: optionset2 },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'optionset3', value: optionset3 },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'type_shop', value: type_shop },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+                }
+            });
+
             $('#priceSetTable').on('change', '.fulldescription', function() {
                 var $row = $(this).closest('tr');
                 var id = $row.data('id');
                 var model_sku = $(this).val();
                 var brand = $(this).find('option:selected').data('brand');
+                var status = $(this).find('option:selected').data('status');
+                var stock_qty = $(this).find('option:selected').data('stock_qty');
+                var price_rrp = $(this).find('option:selected').data('price_rrp');
+                var cost_b = $(this).find('option:selected').data('cost_b');
+                var margin = $(this).find('option:selected').data('margin');
+                var location = $row.find('td[data-column="location"]').text();
                 
                 $row.find('.brand').val(brand);
+                $row.find('.cost_status').val(status);
+                $row.find('.stock').val(stock_qty);
+                $row.find('.price_rrp').val(price_rrp);
+                $row.find('.cost').val(cost_b);
+                $row.find('.mg').val(margin);
                 
-                var costStatus = "";
-                var stockQty = "";
-                var priceRRP = "";
-                var costB = "";
-                var Margin = "";
-                
-                if (model_sku == "FIRST CLASS WIRED EARPHONE 3.5MM LEP-L08") {
-                    costStatus = "";
-                    priceRRP = "100.00";
-                    stockQty = "4049"; 
-                    costB = "50.00"; 
-                    Margin = "10"; 
+                if (!isNaN(price_rrp)) {
+                    var cost_premium = 0;
+                    var optionset1 = '';
+                    var optionset2 = '';
+                    var optionset3 = '';
+                    var type_shop = '';
+                    var costbigc = 0.00;
+
+                    // Apply the conditions for calculating costbigc based on brand
+                    if (brand === 'APPLE') {
+                        costbigc = price_rrp * 0.02; // 2% for APPLE
+                    } else if (brand === 'realme') {
+                        costbigc = price_rrp * 0.075; // 7.5% for realme
+                    } else if (brand === 'XIAOMI') {
+                        costbigc = price_rrp * 0.08; // 8% for XIAOMI
+                    } else {
+                        costbigc = price_rrp * 0.09; // 9% for other brands
+                    }
+                    
+                    set_premium_data.forEach(function(item) {
+                        var lowest_price = parseFloat(item.lowest_price);
+                        var highest_price = parseFloat(item.highest_price);
+                        console.log('location ',location);
+                        
+                        if ((price_rrp >= lowest_price && price_rrp <= highest_price) && location === item.type) {
+                            cost_premium = parseFloat(item.cost_installment);
+                            optionset1 = item.optionset1
+                            optionset2 = item.optionset2
+                            optionset3 = item.optionset3
+                            type_shop = item.type
+                            console.log('เข้าเงื่อนไข ');
+                        }
+                    });
+
+                    var brand_support = parseFloat($row.find('td[data-column="brand_support"]').text()) || 0.00;
+                    var bigc_support = parseFloat($row.find('td[data-column="bigc_support"]').text()) || 0.00;
+                    var tg_support_promotion = parseFloat($row.find('td[data-column="tg_support_promotion"]').text()) || 0.00;
+                    var costex_vat_extra = 0.00
+
+                    console.log("cost_b : " ,cost_b  );
+                    console.log("cost_premium : " ,cost_premium  );
+                    console.log("tg_support_promotion : " ,tg_support_promotion  );
+
+                    costex_vat_extra = ((cost_b + cost_premium + tg_support_promotion)/1.07)-(((cost_b + cost_premium + tg_support_promotion))-(cost_b + cost_premium + tg_support_promotion)/1.07)
+                    $row.find('td[data-column="costex_vat_extra"]').text(costex_vat_extra.toFixed(2));
+
+                    updateTotalDisc($row);  // Update Total Disc
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'costex_vat_extra', value: costex_vat_extra.toFixed(2) },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        }
+                    });
+            
+                    // อัพเดตคอลัมน์ cost_premium ในแถว
+                    $row.find('td[data-column="cost_premium"]').text(cost_premium.toFixed(2));
+                    $row.find('td[data-column="optionset1"]').text(optionset1);
+                    $row.find('td[data-column="optionset2"]').text(optionset2);
+                    $row.find('td[data-column="optionset3"]').text(optionset3);
+                    $row.find('td[data-column="type_shop"]').text(type_shop);
+                    $row.find('td[data-column="costbigc"]').text(costbigc.toFixed(2));
+                    
+                    
+                    var id = $row.data('id');
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'cost_premium', value: cost_premium.toFixed(2) },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'optionset1', value: optionset1 },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'optionset2', value: optionset2 },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'optionset3', value: optionset3 },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'type_shop', value: type_shop },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error in AJAX:", error);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/update_price_set/' + id,
+                        type: 'POST',
+                        data: { column: 'costbigc', value: costbigc.toFixed(2) },
+                        success: function(response) {
+                            if (!response.success) {
+                                alert(response.message);
+                            }
+                        }
+                    });
                 }
-                
-                if (model_sku == "HONOR 70 8/256GB") {
-                    costStatus = "";
-                    priceRRP = "150";
-                    stockQty = "585"; 
-                    costB = "20.00"; 
-                    Margin = "10"; 
-                }
-                
-                if (model_sku == "SAMSUNG GALAXY Z FLIP4 5G 8/128GB") {
-                    costStatus = "";
-                    priceRRP = "NaN";
-                    stockQty = "1398"; 
-                    costB = "NaN"; 
-                    Margin = "None"; 
-                }
-                
-                $row.find('.cost_status').val(costStatus);
-                $row.find('.stock').val(stockQty);
-                $row.find('.price_rrp').val(priceRRP);
-                $row.find('.cost').val(costB);
-                
+
                 $.ajax({
                     url: '/update_price_set/' + id,
                     type: 'POST',
@@ -419,7 +864,7 @@
                     type: 'POST',
                     data: {
                         column: 'cost_status',
-                        value: costStatus
+                        value: status
                     },
                     success: function(response) {
                         if (!response.success) {
@@ -433,7 +878,7 @@
                     type: 'POST',
                     data: {
                         column: 'stock',
-                        value: stockQty
+                        value: stock_qty
                     },
                     success: function(response) {
                         if (!response.success) {
@@ -447,7 +892,7 @@
                     type: 'POST',
                     data: {
                         column: 'price_rrp',
-                        value: priceRRP
+                        value: price_rrp
                     },
                     success: function(response) {
                         if (!response.success) {
@@ -461,7 +906,7 @@
                     type: 'POST',
                     data: {
                         column: 'cost',
-                        value: costB
+                        value: cost_b
                     },
                     success: function(response) {
                         if (!response.success) {
@@ -475,7 +920,7 @@
                     type: 'POST',
                     data: {
                         column: 'mg',
-                        value: Margin
+                        value: margin
                     },
                     success: function(response) {
                         if (!response.success) {
@@ -536,17 +981,70 @@
                     });
                 }
             });
+            
+            function validateDecimalInput(value) {
+                // Regular expression to match numbers with up to 2 decimal places
+                var regex = /^\d+(\.\d{0,2})?$/;
+                return regex.test(value);
+            }
+            
+            // Update Total Disc when user is done typing (blur event)
+            $('#priceSetTable').on('blur', 'td[contenteditable="true"]', function() {
+                var $row = $(this).closest('tr');
+                var $cell = $(this);
+                var column = $(this).data('column');
+                
+                if (column === 'bigc_support' || column === 'brand_support' || column === 'tg_support' || column === 'tg_support_promotion' ) {
+                    var value = $cell.text().trim(); // ตัดช่องว่างด้านหน้าและหลัง
+            
+                    // ตรวจสอบเฉพาะตอนที่มีค่า ไม่ใช่ช่องว่าง
+                    if (value !== "") {
+                        // Validate if input matches the number format with up to 2 decimal places
+                        if (!validateDecimalInput(value)) {
+                            alert("Please enter a valid number with up to 2 decimal places.");
+                            $cell.text('');  // Clear invalid input
+                        } else {
+                            // Format value to 2 decimal places if it's valid
+                            $cell.text(parseFloat(value).toFixed(2));
+                        }
+                    }
+                }
+            });
+            
+            
+        
 
             // Update Total Disc when user is typing in editable columns
             $('#priceSetTable').on('input', 'td[contenteditable="true"]', function() {
                 var $row = $(this).closest('tr');
                 var column = $(this).data('column');
-            
-                console.log("Column: " + column );
+                var brand_support = parseFloat($row.find('td[data-column="brand_support"]').text()) || 0.00;
+                var bigc_support = parseFloat($row.find('td[data-column="bigc_support"]').text()) || 0.00;
+                var price_rrp = parseFloat($row.find('input.price_rrp').val()) || 0;
+                var cost_b = parseFloat($row.find('input.cost').val()) || 0.00;
+                var cost_premium = parseFloat($row.find('td[data-column="cost_premium"]').text()) || 0.00;
+                var tg_support_promotion = parseFloat($row.find('td[data-column="tg_support_promotion"]').text()) || 0.00;
+                var sellingprice = 0.00
+                
+                // console.log("$row : " ,$row  );
                 // Call the update function only for these columns
                 if (column === 'bigc_support' || column === 'brand_support' || column === 'tg_support') {
+                    if (column === 'bigc_support' || column === 'brand_support'){
+                        sellingprice = ((brand_support + price_rrp + bigc_support)/1.07)-(((brand_support + price_rrp + bigc_support))-(brand_support + price_rrp + bigc_support)/1.07)
+                        $row.find('td[data-column="sellingprice"]').text(sellingprice.toFixed(2));
+                    }
                     updateTotalDisc($row);  // Update Total Disc
-                    console.log("เข้าเงื่อนไข xxx " );
+                }
+
+                console.log("cost_b : " ,cost_b  );
+                console.log("cost_premium : " ,cost_premium  );
+                console.log("tg_support_promotion : " ,tg_support_promotion  );
+                if (column === 'cost_b' || column === 'cost_premium' || column === 'tg_support_promotion') {
+                    if (column === 'tg_support_promotion'){
+                        costex_vat_extra = ((cost_b + cost_premium + tg_support_promotion)/1.07)-(((cost_b + cost_premium + tg_support_promotion))-(cost_b + cost_premium + tg_support_promotion)/1.07)
+                        $row.find('td[data-column="costex_vat_extra"]').text(costex_vat_extra.toFixed(2));
+                    }
+                    updateTotalDisc($row);  // Update Total Disc
                 }
             });
             
@@ -556,6 +1054,9 @@
                 const bigcSupport = parseFloat($row.find('td[data-column="bigc_support"]').html()) || 0;
                 const brandSupport = parseFloat($row.find('td[data-column="brand_support"]').html()) || 0;
                 const tgSupport = parseFloat($row.find('td[data-column="tg_support"]').html()) || 0;
+                const sellingprice = parseFloat($row.find('td[data-column="sellingprice"]').html()) || 0;
+                const tg_support_promotion = parseFloat($row.find('td[data-column="tg_support_promotion"]').html()) || 0;
+                const costex_vat_extra = parseFloat($row.find('td[data-column="costex_vat_extra"]').html()) || 0;
             
                 // Calculate total discount
                 const sum = bigcSupport + brandSupport + tgSupport;
@@ -569,6 +1070,40 @@
                     url: '/update_price_set/' + id,
                     type: 'POST',
                     data: { column: 'total_disc', value: sum.toFixed(2) },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: { column: 'sellingprice', value: sellingprice.toFixed(2) },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+
+                
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: { column: 'tg_support_promotion', value: tg_support_promotion.toFixed(2) },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: { column: 'costex_vat_extra', value: costex_vat_extra.toFixed(2) },
                     success: function(response) {
                         if (!response.success) {
                             alert(response.message);
@@ -626,9 +1161,94 @@
                 });
             });
 
-
+            // Event listener for the levelfreegift dropdown change
+            $('#priceSetTable').on('change', '.levelfreegift-select', function() {
+                var $row = $(this).closest('tr'); // Find the closest row
+                var id = $row.data('id'); // Get the row ID
+                var value = $(this).val(); // Get the selected value
+            
+                // Send the selected value to the server via AJAX
+                $.ajax({
+                    url: '/update_price_set/' + id,
+                    type: 'POST',
+                    data: { column: 'levelfreegift', value: value },
+                    success: function(response) {
+                        if (!response.success) {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
             
         });        
+        $(document).ready(function() {
+            // เมื่อกดปุ่ม "ดึงข้อมูลเดือนก่อน"
+            $('#fetchLastMonthData').click(function() {
+                $.ajax({
+                    url: '/fetch_last_month_data',
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            var tbody = $('#lastMonthTable tbody');
+                            tbody.empty();  // ล้างข้อมูลเดิม
+                            response.data.forEach(function(row) {
+                                var newRow = `
+                                    <tr data-id="${row.id}">
+                                        <td><input type="checkbox" class="row-select"></td>
+                                        <td>${row.id}</td>
+                                        <td>${row.show_status}</td>
+                                        <td>${row.update_status}</td>
+                                        <td>${row.start_date}</td>
+                                        <td>${row.end_date}</td>
+                                        <td>${row.location}</td>
+                                        <td>${row.brand}</td>
+                                        <td>${row.fulldescription}</td>
+                                    </tr>`;
+                                tbody.append(newRow);
+                            });
+                            $('#lastMonthModal').show();  // แสดง Modal
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+        
+            // เมื่อกดปุ่ม "ตกลง"
+            $('#confirmUpdate').click(function() {
+                var selectedRows = [];
+                $('#lastMonthTable tbody tr').each(function() {
+                    if ($(this).find('.row-select').is(':checked')) {
+                        selectedRows.push($(this).data('id'));
+                    }
+                });
+            
+                if (selectedRows.length > 0) {
+                    $.ajax({
+                        url: '/pull_back_data',
+                        type: 'POST',
+                        contentType: 'application/json',  // ระบุว่าเป็น JSON
+                        data: JSON.stringify({ ids: selectedRows }),  // แปลง selectedRows ให้เป็น JSON
+                        success: function(response) {
+                            if (response.success) {
+                                alert('อัปเดต status_delete เป็น False สำเร็จ');
+                                $('#lastMonthModal').hide();  // ปิด Modal
+                                location.reload();  // โหลดหน้าใหม่
+                            } else {
+                                alert(response.message);
+                            }
+                        }
+                    });
+                } else {
+                    alert('กรุณาเลือกแถวอย่างน้อย 1 แถว');
+                }
+            });
+        
+            // เมื่อกดปุ่ม "ปิด" ใน Modal
+            $('#closeModal').click(function() {
+                $('#lastMonthModal').hide();  // ปิด Modal
+            });
+        });
     </script>
     {% endblock %}
 </body>

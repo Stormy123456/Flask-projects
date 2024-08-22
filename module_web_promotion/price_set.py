@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, Response, jsonify, send_file, session, flash
+from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta, time
 from config_db import db_test
 from collections import defaultdict
@@ -72,3 +73,30 @@ def delete_data(id):
         connection.close()  # ปิดการเชื่อมต่อ
 
     return jsonify({'success': True})
+
+def update_status_delete():
+    try:
+        # เชื่อมต่อฐานข้อมูล
+        connection = pyodbc.connect(db_test)
+        cursor = connection.cursor()
+
+        # อัปเดตคอลัมน์ status_delete เป็น True ในกรณีที่ค่าไม่ใช่ True อยู่แล้ว
+        update_query = """UPDATE price_set 
+                          SET status_delete = TRUE 
+                          WHERE status_delete != TRUE"""
+        cursor.execute(update_query)
+        connection.commit()
+
+        print("อัปเดต status_delete สำเร็จ")
+
+    except Exception as e:
+        print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
+
+    finally:
+        connection.close()  # ปิด connection
+
+def start_scheduler():
+    scheduler = BackgroundScheduler()
+    # กำหนดให้ทำงานทุกสิ้นเดือน
+    scheduler.add_job(update_status_delete, 'cron', day='last', hour=23, minute=59)
+    scheduler.start()
