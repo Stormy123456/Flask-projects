@@ -17,7 +17,7 @@ from module_web_promotion.cost_data import stock_qty, cost_insert, cost_edit, co
 from module_web_promotion.set_premium import set_premium_insert, set_premium_edit, set_premium_delete
 
 from module_web_promotion.auth import AuthModule
-
+from module_web_promotion.log_edit_data import log_event
 # from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 import sys
@@ -289,7 +289,7 @@ app.secret_key = 'your_secret_key'
 
 ################################################### Web Login Logout ###################################################
 # กำหนด URL ของ API สำหรับล็อกอิน
-API_URL = "http://192.168.10.25:3004/api-auth-user/login"
+API_URL = "https://app01.tgfone.com/data_user/api-auth_user.php?action=login"
 auth = AuthModule(API_URL)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -297,8 +297,9 @@ def login():
     if request.method == 'POST':
         employee_code = request.form['employee_code']
         password = request.form['password']
-
+        # print(employee_code+ ' ' + password);
         # สมมติว่าทำการตรวจสอบแล้วว่าผู้ใช้เข้าสู่ระบบสำเร็จ
+        # print(auth.login(employee_code, password))
         if auth.login(employee_code, password):
             # ถ้าเข้าสู่ระบบสำเร็จ
             success_message = "เข้าสู่ระบบสำเร็จ."

@@ -10,6 +10,8 @@ import pandas as pd
 import ast
 import sys
 import codecs
+from module_web_promotion.log_edit_data import log_event
+
 
 def set_premium_insert():
     print("Successfully")
@@ -44,6 +46,15 @@ def set_premium_insert():
                 
                 # Commit เปลี่ยนแปลง
                 connection_db.commit()
+
+                log_event(
+                    connection_params=connection_db,
+                    event_type='set_premium_insert',
+                    user_edit=session['employee_code'],
+                    old_value={'name': 'John', 'age': 30},
+                    new_value=sql_query,
+                    description="Insert set premium"
+                )
         except Exception as e:
             print(f"Error on item: {item}")
             print("Error:", str(e))

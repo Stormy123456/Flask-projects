@@ -10,6 +10,7 @@ import pandas as pd
 import ast
 import sys
 import codecs
+from module_web_promotion.log_edit_data import log_event
 
 def add_data():
     try:
@@ -36,6 +37,8 @@ def update_data(id):
         sql_query = f"UPDATE price_set SET {column} = ? WHERE id = ?"
         cursor.execute(sql_query, (value, id))
         connection.commit()
+        
+        log_event(connection_params=connection, event_type='update_data_price_set', employee_code=session['employee_code'], employee_name=session['name_user'], new_value={value, id}, description="Updated update data price set")
     except Exception as e:
         print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
         return jsonify({'success': False, 'message': str(e)})

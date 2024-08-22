@@ -1,6 +1,6 @@
 import requests
 import json
-from flask import session, redirect, url_for, flash
+from flask import session, redirect, url_for, flash, request, render_template
 
 class AuthModule:
     def __init__(self, api_url):
@@ -8,17 +8,19 @@ class AuthModule:
 
     def login(self, employee_code, password):
     # เตรียม payload สำหรับ API request
-        payload = json.dumps({
+        payload = {
             "employee_code": employee_code,
             "pass_user": password
-        })
+        }
         headers = {
             'Content-Type': 'application/json'
         }
 
         # ส่ง request ไปที่ API
         try:
-            response = requests.post(self.api_url, headers=headers, data=payload)
+            response = requests.post(self.api_url, headers=headers, json=payload)
+            print(response.status_code)
+            print(response.text)  # ใช้ text หาก JSON ไม่สามารถแปลงได้
             if response.status_code == 200:
             # รับข้อมูลผู้ใช้จาก API
                 user_data = response.json()
