@@ -66,7 +66,7 @@ def api_get_datapos():
                                 case 
                                         when s_pro_l.name is not null and posl.qty = 1 then ROUND((1 * posl.price_unit) * (1 - (posl.discount / 100)), 2)
                                         when s_pro_l.name is not null and posl.qty = -1 then ROUND((-1 * posl.price_unit) * (1 - (posl.discount / 100)), 2)
-                                        else ROUND((posl.qty * posl.price_unit) * (1 - (posl.discount / 100)), 2)
+                                        else ROUND((posl.price_subtotal_incl) * (1 - (posl.discount / 100)), 2)
                                 end AS price_subtotal,
                                 ROUND(posl.price_unit, 2) as unit_price,
                                 ROUND(pos.amount_total, 2) as total,

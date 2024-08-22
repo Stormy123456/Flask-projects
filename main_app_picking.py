@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, session, url_for
-from datetime import datetime
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify
+from datetime import datetime, timedelta
 from module_warehouse_apps.sp_automate_app.sp_automate import api_get_datapicking, generate_excel, generate_excellines 
 from module_ar_apps.pos_data_report_app.pos_data_report import api_get_datapos 
 from module_ar_apps.e_tax_report_app.e_tax_report import api_get_from_data_cn, api_get_from_data_inv
@@ -294,6 +294,7 @@ def web_promotion_price_set():
                         *
                     from
                     	price_set ps
+                    where ps.status_delete is not true
                     order by ps.id ASC"""
         cursor.execute(sql_query)
         rows = cursor.fetchall()
@@ -316,13 +317,29 @@ def web_promotion_price_set():
                 if row[key] is None:
                     row[key] = ''
 
-        print(cost_data)  # ตรวจสอบข้อมูลที่ได้
-
     except Exception as e:
         print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
     finally:
         connection.close()  # ปิด Connection
-    return render_template('web_promotion/price_set.html', data=data,cost_data=cost_data)
+        
+    try:    
+        connection_db_test = pyodbc.connect(db_test)
+        cursor = connection_db_test.cursor()
+        set_premium_query = """
+            SELECT *
+            FROM set_premium sp
+        """
+        cursor.execute(set_premium_query)
+        rows = cursor.fetchall()
+        columns = [column[0] for column in cursor.description]
+        set_premium_data = [dict(zip(columns, row)) for row in rows]
+
+    except Exception as e:
+        print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
+
+    finally:
+        connection_db_test.close()  # ปิด connection_db_testt
+    return render_template('web_promotion/price_set.html', data=data,cost_data=cost_data,set_premium_data=set_premium_data)
 
 
 @app.route('/add_price_set', methods=['POST'])
@@ -336,6 +353,61 @@ def update_price_set(id):
 @app.route('/delete_price_set/<int:id>', methods=['POST'])
 def delete_price_set(id):
     return delete_data(id)
+
+@app.route('/fetch_last_month_data', methods=['GET'])
+def fetch_last_month_data():
+    try:
+        connection = pyodbc.connect(db_test)
+        cursor = connection.cursor()
+
+        # คำนวณเดือนก่อนหน้า
+        # last_month = (datetime.now().replace(day=1) - timedelta(days=1)).strftime('%Y-%m')
+        # print("last_month = ",last_month)
+        
+        query = """SELECT id, show_status, update_status, start_date, end_date, location, brand, fulldescription
+                   FROM price_set
+                   WHERE (show_status = 'True' OR update_status = 'True') 
+                   AND status_delete = 'True'"""
+                   
+        cursor.execute(query)
+        
+        # query = """SELECT id, show_status, update_status, start_date, end_date, location, brand, fulldescription
+        #            FROM price_set
+        #            WHERE (show_status = 'True' OR update_status = 'True')
+        #            AND start_date LIKE ?"""
+
+        # cursor.execute(query, (last_month + '%',))
+        rows = cursor.fetchall()
+
+        columns = [column[0] for column in cursor.description]
+        data = [dict(zip(columns, row)) for row in rows]
+
+        return jsonify({'success': True, 'data': data})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
+    finally:
+        connection.close()
+
+@app.route('/pull_back_data', methods=['POST'])
+def pull_back_data():
+    ids = request.json.get('ids', [])
+    
+    if not ids:
+        return jsonify({'success': False, 'message': 'ไม่มีข้อมูลที่เลือก'})
+    
+    try:
+        connection = pyodbc.connect(db_test)
+        cursor = connection.cursor()
+
+        query = """UPDATE price_set SET status_delete = False WHERE id IN ({})""".format(','.join('?' * len(ids)))
+        cursor.execute(query, ids)
+        connection.commit()
+
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
+    finally:
+        connection.close()
 
 ################################################### Module Cost&Status ###################################################
 @app.route('/web_promotion_cost', methods=['GET', 'POST'])
@@ -365,7 +437,8 @@ def web_promotion_cost():
     except Exception as e:
         print("การเชื่อมต่อฐานข้อมูล Odoo ไม่สำเร็จ:", str(e))
     finally:
-        connection_odoo.close()  # ปิด Connection
+        connection_odoo.close()  # ปิด connection_odoo
+        
     try:
         connection = pyodbc.connect(db_test)
         cursor = connection.cursor()
