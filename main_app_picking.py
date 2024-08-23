@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-from flask import Flask, render_template, request, redirect, session, url_for, flash
-from datetime import datetime
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify, flash
+from datetime import datetime, timedelta
 # from module_warehouse_apps.sp_automate_app.sp_automate import api_get_datapicking, generate_excel, generate_excellines 
 # from module_ar_apps.pos_data_report_app.pos_data_report import api_get_datapos 
 # from module_ar_apps.e_tax_report_app.e_tax_report import api_get_from_data_cn, api_get_from_data_inv
@@ -13,22 +12,6 @@ from datetime import datetime
 # from modeule_log_users.log_users_module import log_users
 # from module_ar_apps.gi_data_report_app.gi_data_report import print_gi_data_report
 # from module_web_import_mis.web_import_mis import import_data_mis
-=======
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify
-from datetime import datetime, timedelta
-from module_warehouse_apps.sp_automate_app.sp_automate import api_get_datapicking, generate_excel, generate_excellines 
-from module_ar_apps.pos_data_report_app.pos_data_report import api_get_datapos 
-from module_ar_apps.e_tax_report_app.e_tax_report import api_get_from_data_cn, api_get_from_data_inv
-from module_ar_apps.texcom_report_app.get_data import api_get_data
-from module_ar_apps.texcom_report_app.get_data_with_po import api_get_data_with_po
-from module_ar_apps.texcom_report_app.data_payment import api_get_data_payment
-from module_ar_apps.texcom_report_app.data_cost import api_get_data_cost
-from module_auth.auth_module import auth_users
-from module_permission.config_permission import user_permission_check, config_page, add_permissions_spautomate, add_permissions_pos_data, add_permissions_etax, add_permissions_texcom
-from modeule_log_users.log_users_module import log_users
-from module_ar_apps.gi_data_report_app.gi_data_report import print_gi_data_report
-from module_web_import_mis.web_import_mis import import_data_mis
->>>>>>> BIG
 from module_web_promotion.price_set import add_data, update_data, delete_data
 from module_web_promotion.cost_data import stock_qty, cost_insert, cost_edit, cost_delete
 from module_web_promotion.set_premium import set_premium_insert, set_premium_edit, set_premium_delete
@@ -306,7 +289,7 @@ app.secret_key = 'your_secret_key'
 
 ################################################### Web Login Logout ###################################################
 # กำหนด URL ของ API สำหรับล็อกอิน
-API_URL = "http://192.168.10.25:3004/api-auth-user/login"
+API_URL = "https://arnold.tg.co.th:3004/api-auth-user/login"
 auth = AuthModule(API_URL)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -316,6 +299,7 @@ def login():
         password = request.form['password']
 
         # สมมติว่าทำการตรวจสอบแล้วว่าผู้ใช้เข้าสู่ระบบสำเร็จ
+        print(auth.login(employee_code, password))
         if auth.login(employee_code, password):
             # ถ้าเข้าสู่ระบบสำเร็จ
             success_message = "เข้าสู่ระบบสำเร็จ."
@@ -365,36 +349,12 @@ def web_promotion_price_set():
     connection = None
 
     try:
-<<<<<<< HEAD
+        print(session.get('type_status'))
         if 'employee_code' in session:
             if int(session.get('type_status')) == 3:
                 try:
                     # สร้างการเชื่อมต่อกับฐานข้อมูล
                     connection = pyodbc.connect(db_test)
-=======
-        connection = pyodbc.connect(db_test)
-        cursor = connection.cursor()
-        sql_query = """select 
-                        *
-                    from
-                    	price_set ps
-                    where ps.status_delete is not true
-                    order by ps.id ASC"""
-        cursor.execute(sql_query)
-        rows = cursor.fetchall()
-        columns = [column[0] for column in cursor.description]
-        data = [dict(zip(columns, row)) for row in rows]
-        
-        cost_data_query = """select 
-                        *
-                    from
-                    	cost_and_status cs
-                    order by cs.model_sku ASC"""
-        cursor.execute(cost_data_query)
-        rows = cursor.fetchall()
-        columns = [column[0] for column in cursor.description]
-        cost_data = [dict(zip(columns, row)) for row in rows]
->>>>>>> BIG
 
                     cursor = connection.cursor()
                     # Query สำหรับดึงข้อมูลจาก price_set
@@ -419,7 +379,6 @@ def web_promotion_price_set():
                     columns = [column[0] for column in cursor.description]
                     cost_data = [dict(zip(columns, row)) for row in rows]
 
-<<<<<<< HEAD
                     # แทนที่ค่า NULL ด้วยช่องว่าง
                     for row in data:
                         for key in row:
@@ -430,9 +389,29 @@ def web_promotion_price_set():
 
                 except Exception as e:
                     print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
+           
+                finally:
+                    connection.close()  # ปิด Connection
+                    
+                try:    
+                    connection_db_test = pyodbc.connect(db_test)
+                    cursor = connection_db_test.cursor()
+                    set_premium_query = """
+                        SELECT *
+                        FROM set_premium sp
+                    """
+                    cursor.execute(set_premium_query)
+                    rows = cursor.fetchall()
+                    columns = [column[0] for column in cursor.description]
+                    set_premium_data = [dict(zip(columns, row)) for row in rows]
 
+                except Exception as e:
+                    print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
+
+                finally:
+                    connection_db_test.close()  # ปิด connection_db_testt
                 # ส่งข้อมูลไปยังเทมเพลตเพื่อแสดงผล
-                return render_template('web_promotion/price_set.html', data=data, cost_data=cost_data, request=request)
+                return render_template('web_promotion/price_set.html', data=data, cost_data=cost_data, request=request, set_premium_data=set_premium_data)
 
             else:
                 flash('Access denied: insufficient permissions.')
@@ -446,31 +425,6 @@ def web_promotion_price_set():
 
         
         
-=======
-    except Exception as e:
-        print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
-    finally:
-        connection.close()  # ปิด Connection
-        
-    try:    
-        connection_db_test = pyodbc.connect(db_test)
-        cursor = connection_db_test.cursor()
-        set_premium_query = """
-            SELECT *
-            FROM set_premium sp
-        """
-        cursor.execute(set_premium_query)
-        rows = cursor.fetchall()
-        columns = [column[0] for column in cursor.description]
-        set_premium_data = [dict(zip(columns, row)) for row in rows]
-
-    except Exception as e:
-        print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
-
-    finally:
-        connection_db_test.close()  # ปิด connection_db_testt
-    return render_template('web_promotion/price_set.html', data=data,cost_data=cost_data,set_premium_data=set_premium_data)
->>>>>>> BIG
 
 
 @app.route('/add_price_set', methods=['POST'])
@@ -539,7 +493,6 @@ def pull_back_data():
         return jsonify({'success': False, 'message': str(e)})
     finally:
         connection.close()
-
 ################################################### Module Cost&Status ###################################################
 @app.route('/web_promotion_cost', methods=['GET', 'POST'])
 def web_promotion_cost():
@@ -568,7 +521,7 @@ def web_promotion_cost():
                         AND ( pp.default_code not like '%DM%' AND pp.default_code not like '%DS%')
                         AND pc.complete_name like '%SALEABLE%'
                         group by pt.id,pt.name,pb.name,ps.name"""
-<<<<<<< HEAD
+
                     cursor.execute(sql_query)
                     data_list = cursor.fetchall()
                     odoo_product = [{"id": row.id, "name": row.name, "brand": row.brand, "status": row.status} for row in data_list]
@@ -582,20 +535,6 @@ def web_promotion_cost():
                     connection = pyodbc.connect(db_test)
                     cursor = connection.cursor()
                     sql_query = """select 
-=======
-        cursor.execute(sql_query)
-        data_list = cursor.fetchall()
-        odoo_product = [{"id": row.id, "name": row.name, "brand": row.brand, "status": row.status} for row in data_list]
-    except Exception as e:
-        print("การเชื่อมต่อฐานข้อมูล Odoo ไม่สำเร็จ:", str(e))
-    finally:
-        connection_odoo.close()  # ปิด connection_odoo
-        
-    try:
-        connection = pyodbc.connect(db_test)
-        cursor = connection.cursor()
-        sql_query = """select 
->>>>>>> BIG
                         cas.id,
                     	cas.start,
                     	cas.end,

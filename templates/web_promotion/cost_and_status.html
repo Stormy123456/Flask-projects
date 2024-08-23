@@ -86,74 +86,89 @@
     {% block title %}Cost & Status{% endblock %}
     {% block content %}
     <div class="container-fluid px-4">
-        <h1 class="mt-4">Cost & Status</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Cost & Status</li>
-        </ol>
-        <button class="btn btn-success mb-3" id="insertRowButton">Insert</button>
-        <div class="table-wrapper">
-            <table id="example" class="display nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>ID</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Brand</th>
-                        <th>Model SKU</th>
-                        <th>Price RRP</th>
-                        <th>Margin</th>
-                        <th>Cost</th>
-                        <th>Timestamp</th>
-                        <th>Status</th>
-                        <th>Status Cost</th>
-                        <th>Stock Remaining</th>
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th><select id="brand-filter"><option value="">All</option></select></th>
-                        <th><select id="model-sku-filter"><option value="">All</option></select></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th><select id="status-filter"><option value="">All</option></select></th>
-                        <th><select id="status-cost-filter"><option value="">All</option></select></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in data %}
-                        <tr>
-                            <td>
-                                <button class="btn btn-primary btn-sm" onclick='editRow(this)'>Edit</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">Delete</button>
-                            </td>
-                            <td>{{ row.id }}</td>
-                            <td>{{ row.start }}</td>
-                            <td>{{ row.end }}</td>
-                            <td>{{ row.brand }}</td>
-                            <td>{{ row.model_sku }}</td>
-                            <td>{{ row.price_rrp if row.price_rrp not in [None, 'NaN'] else "" }}</td>
-                            <td>{{ row.margin if row.margin not in [None, 'NaN'] else "" }}</td>
-                            <td>{{ row.cost_b if row.cost_b not in [None, 'NaN'] else "" }}</td>
-                            <td>{{ row.timestamp }}</td>
-                            <td>{{ row.status if row.status not in [None, 'NaN'] else "" }}</td>
-                            <td>{{ row.status_cost if row.status_cost not in [None, 'NaN'] else "" }}</td>
-                            <td>{{ row.stock_qty if row.stock_qty not in [None, 'NaN'] else "" }}</td>
-                        </tr>
-                    {% else %}
-                        <tr id="no-data">
-                            <td colspan="13" class="text-center">ไม่มีข้อมูล</td> <!-- ปรับ colspan ให้ตรงกับจำนวนคอลัมน์ -->
-                        </tr>
-                    {% endfor %}
-                </tbody>
-                
-            </table>
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header pb-0">
+                        <div class="d-flex justify-content-between">
+                            <h6 class>Cost & Status</h6>
+                            <div class="text-end">
+                                <button class="btn btn-success mb-3" id="insertRowButton">
+                                    Insert
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body px-4 pt-0 pb-2">
+                        <div class="table-wrapper">
+                            <table id="example" class="display nowrap" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>ID</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Brand</th>
+                                        <th>Model SKU</th>
+                                        <th>Price RRP</th>
+                                        <th>Margin</th>
+                                        <th>Cost</th>
+                                        <th>Timestamp</th>
+                                        <th>Status</th>
+                                        <th>Status Cost</th>
+                                        <th>Stock Remaining</th>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th><select id="brand-filter"><option value="">All</option></select></th>
+                                        <th><select id="model-sku-filter"><option value="">All</option></select></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th><select id="status-filter"><option value="">All</option></select></th>
+                                        <th><select id="status-cost-filter"><option value="">All</option></select></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in data %}
+                                        <tr>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick='editRow(this)'>Edit</button>
+                                                <button class="btn btn-danger btn-sm" onclick="deleteRow('{{ row.id }}')">Delete</button>
+                                            </td>
+                                            <td>{{ row.id }}</td>
+                                            <td>{{ row.start }}</td>
+                                            <td>{{ row.end }}</td>
+                                            <td>{{ row.brand }}</td>
+                                            <td>{{ row.model_sku }}</td>
+                                            <td>{{ row.price_rrp if row.price_rrp not in [None, 'NaN'] else "" }}</td>
+                                            <td>{{ row.margin if row.margin not in [None, 'NaN'] else "" }}</td>
+                                            <td>{{ row.cost_b if row.cost_b not in [None, 'NaN'] else "" }}</td>
+                                            <td>{{ row.timestamp }}</td>
+                                            <td>{{ row.status if row.status not in [None, 'NaN'] else "" }}</td>
+                                            <td>{{ row.status_cost if row.status_cost not in [None, 'NaN'] else "" }}</td>
+                                            <td>{{ row.stock_qty if row.stock_qty not in [None, 'NaN'] else "" }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr id="no-data">
+                                            <td colspan="13" class="text-center">ไม่มีข้อมูล</td> <!-- ปรับ colspan ให้ตรงกับจำนวนคอลัมน์ -->
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+       
+       
     </div>
 
     <script>

@@ -19,6 +19,7 @@ class AuthModule:
         # ส่ง request ไปที่ API
         try:
             response = requests.post(self.api_url, headers=headers, data=payload)
+            print(response.text)
             if response.status_code == 200:
             # รับข้อมูลผู้ใช้จาก API
                 user_data = response.json()
