@@ -19,13 +19,91 @@
     <link href="static/css/nucleo-svg.css" rel="stylesheet" />
 
     <link id="pagestyle" href="static/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+    <style type="text/css">
+      body.g-sidenav-show .main-content {
+    transition: margin-left 0.3s ease-in-out;
+    margin-left: 250px; /* Adjust based on sidebar width */
+}
+
+body.g-sidenav-show .main-content.collapsed {
+    margin-left: 80px; /* Adjust when sidebar is collapsed */
+}
+
+.sidenav.collapsed {
+    width: 80px;
+}
+
+.sidenav.collapsed ~ .main-content {
+    margin-left: 80px; /* Adjust the content margin when sidebar is collapsed */
+    /* background-color: #fff !important; */
+}
+
+.sidenav.collapsed ~ .min-height-300.bg-primary {
+    width: calc(100% - 80px);
+    /* background-color: #fff !important; */
+}
+
+.sidenav ~ .min-height-300.bg-primary {
+    transition: width 0.3s ease-in-out;
+    width: calc(100% - 250px); /* Adjust based on sidebar width */
+    background-color: #fff !important;
+}
+
+.sidenav.collapsed .navbar-nav .nav-item .nav-link .nav-link-text {
+    display: none;
+}
+
+.sidenav.collapsed .navbar-brand-img {
+    /* display: none; */
+    padding: 10px;
+}
+
+.sidenav.collapsed .navbar-brand {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.sidenav.collapsed .sidenav-header {
+    text-align: center;
+}
+
+.sidenav.collapsed .sidenav-footer {
+    text-align: center;
+    padding: 0;
+}
+
+.sidenav.collapsed .icon-sm {
+    width: 40px;
+    height: 40px;
+    margin: auto;
+}
+
+.sidenav.collapsed .btn {
+    justify-content: center;
+}
+.sidenav.collapsed h6 {
+    text-align: center;
+    margin: 10px 0;
+    padding: 0;
+    font-size: 8px !important;
+}
+
+.sidenav.collapsed .nav-link {
+    justify-content: center;
+}
+
+.sidenav.collapsed .btn .nav-link-text {
+    display: none;
+}
+
+.sidenav.collapsed .btn {
+    justify-content: center;
+}
+    </style>
     </head>
     <body class="g-sidenav-show bg-gray-100">
         <div class="min-height-300 bg-primary position-absolute w-100"></div>
-        <aside
-          class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4"
-          id="sidenav-main"
-        >
+<aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4" id="sidenav-main">
           <div class="sidenav-header">
             <i
               class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
@@ -41,12 +119,10 @@
           <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
             <ul class="navbar-nav">
                 <li class="nav-item mt-3">
-                    <h6
-                      class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6"
-                    >
-                    PROMOTIONS
+                    <h6 class="ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
+                        PROMOTIONS
                     </h6>
-                  </li>
+                </li>
               <li class="nav-item">
                 <a class="nav-link {{ 'active' if request.path == '/web_promotion_price_set' else '' }}" href="/web_promotion_price_set">
                   <div
@@ -58,12 +134,10 @@
                 </a>
               </li>
               <li class="nav-item mt-3">
-                <h6
-                  class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6"
-                >
-                Masters
+                <h6 class="ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
+                    MASTERS
                 </h6>
-              </li>
+            </li>
               <li class="nav-item">
                 <a class="nav-link {{ 'active' if request.path == '/web_promotion_cost' else '' }}" href="web_promotion_cost">
                   <div
@@ -109,11 +183,18 @@
           id="navbarBlur"
           data-scroll="false">
           <div class="container-fluid py-1 px-3">
+            <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
+                <div class="sidenav-toggler-inner">
+                    <i class="sidenav-toggler-line bg-white"></i>
+                    <i class="sidenav-toggler-line bg-white"></i>
+                    <i class="sidenav-toggler-line bg-white"></i>
+                </div>
+            </a>
             <div
               class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4 justify-content-end"
               id="navbar">
               <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-        
+            
                 <ul class="navbar-nav justify-content-end">
                   <li class="nav-item d-flex align-items-center justify-content-center">
                     <div
@@ -123,7 +204,7 @@
                       <span class="d-sm-inline d-none opacity-5 text-white">{{ session.brance_code }} / {{ session.brance_name }}</span>
                     </div>
                   </li>
-                  <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                  <!-- <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
                     <a
                       href="javascript:;"
                       class="nav-link text-white p-0"
@@ -134,7 +215,7 @@
                         <i class="sidenav-toggler-line bg-white"></i>
                       </div>
                     </a>
-                  </li>
+                  </li> -->
                 </ul>
               </div>
             </div>
@@ -231,5 +312,36 @@
           <script src="static/js/argon-dashboard.min.js?v=2.0.4"></script>
         <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script> -->
         <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+         <script>
+       document.getElementById('iconNavbarSidenav').addEventListener('click', function () {
+    const sidebar = document.getElementById('sidenav-main');
+    sidebar.classList.toggle('collapsed');
+
+    const mainContent = document.querySelector('.main-content');
+    mainContent.classList.toggle('collapsed');
+
+  
+      // Ensure bg-white is always present when expanding the sidebar
+    if (sidebar.classList.contains('collapsed')) {
+        sidebar.classList.remove('bg-white');
+        sidebar.classList.add('bg-white');
+    } else {
+        sidebar.classList.remove('bg-white');
+        sidebar.classList.add('bg-white');
+    }
+
+    // Adjust the background and main content width when toggling the sidebar
+    const background = document.querySelector('.min-height-300.bg-primary');
+    if (sidebar.classList.contains('collapsed')) {
+        background.style.width = 'calc(100% - 80px)';
+        mainContent.style.marginLeft = '80px';
+    } else {
+        background.style.width = 'calc(100% - 250px)';
+        mainContent.style.marginLeft = '250px';
+    }
+});
+
+
+         </script>
     </body>
 </html>

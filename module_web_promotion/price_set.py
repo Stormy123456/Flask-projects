@@ -11,6 +11,7 @@ import pandas as pd
 import ast
 import sys
 import codecs
+from module_web_promotion.log_edit_data import log_event
 
 def add_data():
     try:
@@ -21,6 +22,7 @@ def add_data():
             cursor.execute(sql_query)
         connection.commit()
         new_id = cursor.execute("SELECT @@IDENTITY AS id").fetchone().id
+        log_event(connection_params=connection, event_type='add_data_price_set', employee_code=session['employee_code'], employee_name=session['name_user'], add_value={new_id}, description="Add data price set")
     except Exception as e:
         print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
         return jsonify({'success': False, 'message': str(e)})
@@ -37,6 +39,8 @@ def update_data(id):
         sql_query = f"UPDATE price_set SET {column} = ? WHERE id = ?"
         cursor.execute(sql_query, (value, id))
         connection.commit()
+        if value == '':
+            log_event(connection_params=connection, event_type='update_data_price_set', employee_code=session['employee_code'], employee_name=session['name_user'], edit_value={value, id}, description="Update data price set")
     except Exception as e:
         print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
         return jsonify({'success': False, 'message': str(e)})
@@ -65,6 +69,7 @@ def delete_data(id):
         cursor.execute(sql_query, (id,))
         connection.commit()
 
+        log_event(connection_params=connection, event_type='delete_data_price_set', employee_code=session['employee_code'], employee_name=session['name_user'], del_value={id}, description="Delete data price set")
     except Exception as e:
         print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
         return jsonify({'success': False, 'message': str(e)})
@@ -88,7 +93,7 @@ def update_status_delete():
         connection.commit()
 
         print("อัปเดต status_delete สำเร็จ")
-
+        log_event(connection_params=connection, event_type='update_status_delete_price_set', employee_code=session['employee_code'], employee_name=session['name_user'], edit_value={''}, description="อัปเดต status_delete สำเร็จ")
     except Exception as e:
         print("การเชื่อมต่อฐานข้อมูลไม่สำเร็จ:", str(e))
 

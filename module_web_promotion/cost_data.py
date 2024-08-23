@@ -10,6 +10,7 @@ import pandas as pd
 import ast
 import sys
 import codecs
+from module_web_promotion.log_edit_data import log_event
 
 def stock_qty():
     product_id = request.json.get('product_id')
@@ -66,6 +67,7 @@ def cost_insert():
                 
                 # Commit เปลี่ยนแปลง
                 connection_db.commit()
+                log_event(connection_params=connection_db, event_type='cost_insert', employee_code=session['employee_code'], employee_name=session['name_user'], add_value={start, end, brand, model_sku, price_rrp, margin, cost_b, timestamp, status, status_cost, stock_qty, status_delete}, description="Add cost and status")
         except Exception as e:
             print(f"Error on item: {item}")
             print("Error:", str(e))
@@ -100,6 +102,7 @@ def cost_edit():
                 """
                 cursor.execute(sql_query, (start, end, brand, model_sku, price_rrp, margin, cost_b, status, status_cost, stock_qty, id))
                 connection_db.commit()
+                log_event(connection_params=connection_db, event_type='cost_edit', employee_code=session['employee_code'], employee_name=session['name_user'], edit_value={start, end, brand, model_sku, price_rrp, margin, cost_b, status, status_cost, stock_qty, id}, description="Update cost and status")
             except KeyError as e:
                 print(f"Missing key in item: {item}, KeyError: {e}")
             except Exception as e:
@@ -126,6 +129,7 @@ def cost_delete():
         """
         cursor.execute(sql_query, (status_delete, row_id))
         connection_db.commit()
+        log_event(connection_params=connection_db, event_type='cost_delete', employee_code=session['employee_code'], employee_name=session['name_user'], del_value={status_delete, row_id}, description="Delete cost and status")
     except Exception as e:
         print(f"Error on item: {row_id}")
         print("Error:", str(e))

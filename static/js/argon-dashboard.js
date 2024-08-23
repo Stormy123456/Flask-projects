@@ -387,12 +387,12 @@ function toggleSidenav() {
     setTimeout(function() {
       sidenav.classList.remove('bg-white');
     }, 100);
-    sidenav.classList.remove('bg-transparent');
+    sidenav.classList.remove('bg-white');
 
   } else {
     body.classList.add(className);
     sidenav.classList.add('bg-white');
-    sidenav.classList.remove('bg-transparent');
+    sidenav.classList.remove('bg-white');
     iconSidenav.classList.remove('d-none');
   }
 }

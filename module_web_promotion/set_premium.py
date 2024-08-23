@@ -10,6 +10,7 @@ import pandas as pd
 import ast
 import sys
 import codecs
+from module_web_promotion.log_edit_data import log_event
 
 def set_premium_insert():
     print("Successfully")
@@ -44,6 +45,8 @@ def set_premium_insert():
                 
                 # Commit เปลี่ยนแปลง
                 connection_db.commit()
+                log_event(connection_params=connection_db, event_type='set_premium_insert', employee_code=session['employee_code'], employee_name=session['name_user'], add_value={lowest_price, highest_price, optionset1, optionset2, optionset3, cost_installment, month, warranty, type, avg_p, voucher_value, percent ,status_delete}, description="Add set premium")
+        
         except Exception as e:
             print(f"Error on item: {item}")
             print("Error:", str(e))
@@ -81,6 +84,7 @@ def set_premium_edit():
                 """
                 cursor.execute(sql_query, (lowest_price, highest_price, optionset1, optionset2, optionset3, cost_installment, month, warranty, type, avg_p, voucher_value, percent, id))
                 connection_db.commit()
+                log_event(connection_params=connection_db, event_type='set_premium_edit', employee_code=session['employee_code'], employee_name=session['name_user'], edit_value={lowest_price, highest_price, optionset1, optionset2, optionset3, cost_installment, month, warranty, type, avg_p, voucher_value, percent, id}, description="Update set premium")
             except KeyError as e:
                 print(f"Missing key in item: {item}, KeyError: {e}")
             except Exception as e:
@@ -107,6 +111,7 @@ def set_premium_delete():
         """
         cursor.execute(sql_query, (status_delete, row_id))
         connection_db.commit()
+        log_event(connection_params=connection_db, event_type='set_premium_delete', employee_code=session['employee_code'], employee_name=session['name_user'], del_value={status_delete, row_id}, description="Delete set premium")
     except Exception as e:
         print(f"Error on item: {row_id}")
         print("Error:", str(e))
